@@ -18,6 +18,18 @@ def first_num(s):
     m = re.search(r'-?\d+(?:[.,]\d+)?', s or '')
     return num(m.group(0)) if m else None
 
+def temp_num(s):
+    """Temperatura numérica a partir de un campo de texto. Devuelve None cuando el campo solo
+    remite a una fuente ("en Martini 2008 (tabla conocida)", "Benavente 2015 (no extraída)") y
+    descarta los años de las citas para no leer "2015" como grados."""
+    for seg in re.split(r'[;|]', s or ''):
+        if re.search(r'tabla conocida|no extra[ií]da|sin valor|rango dominio|dominio C|^\s*en\s', seg, re.I): continue
+        seg = re.sub(r"[A-ZÁÉÍÓÚ][\wáéíóúñ'\-]+(?:\s+(?:et\s+al\.?|&\s+\w+|y\s+\w+))?\s*,?\s*\(?(?:19|20)\d\d[a-z]?\)?", ' ', seg)
+        seg = re.sub(r'\b(?:19|20)\d\d\b', ' ', seg)
+        v = first_num(seg)
+        if v is not None: return v
+    return None
+
 def norm(s): return re.sub(r'[^a-z0-9 ]', '', (s or '').lower().replace('ñ', 'n'))
 
 ZONAS = [(1, -21.5, -17.5), (2, -26, -21.5), (3, -32.2, -26), (4, -36.3, -32.2), (5, -39.5, -36.3), (6, -44.5, -39.5), (7, -49, -44.5), (8, -56, -49)]
@@ -49,8 +61,8 @@ for r in termas:
     rec = {
         'id': rid, 'n': r['nombre'], 'reg': r['region'], 'com': r['comuna'] or None, 'lat': la, 'lon': lo, 'z': zona(la),
         'capa': r['capa'], 'tipo': r['tipo_categoria'] or 'NA',
-        'tm': first_num(r['T_medida_C']), 'tms': r['T_medida_C'] or None, 'tfm': r['T_fuente_medida'] or None,
-        'td': first_num(r['T_declarada_C']), 'tds': r['T_declarada_C'] or None,
+        'tm': temp_num(r['T_medida_C']), 'tms': r['T_medida_C'] or None, 'tfm': r['T_fuente_medida'] or None,
+        'td': temp_num(r['T_declarada_C']), 'tds': r['T_declarada_C'] or None,
         'ph': first_num(r['pH']), 'q': (r['tipo_quimico'] or None), 'cat': s.get('categoria') or None,
         'infra': infra, 'pueblo': c.get('pueblo_originario') or None, 'orig': r['origen_geologico'] or None,
         'web': s.get('web') or None, 'nest': len(est.get(rid, [])), 'ntes': ntes,
