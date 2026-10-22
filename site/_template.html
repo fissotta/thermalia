@@ -81,6 +81,7 @@ h1 small{font-weight:400;color:var(--muted);font-size:.7em;margin-left:.5em}
 .acciones .star{font-size:11px;opacity:.85;margin-left:2px}
 #status{left:max(16px,env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 58px);font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;backdrop-filter:blur(8px);max-width:min(320px,calc(100vw - 32px))}
 #status b{color:var(--fg);font-weight:700}
+#attrib{right:max(8px,env(safe-area-inset-right,0px));bottom:max(4px,env(safe-area-inset-bottom,0px));font-size:10px;color:rgba(232,238,242,.75);background:rgba(8,14,24,.45);padding:2px 6px;border-radius:6px;z-index:4}
 a{color:var(--agua)}
 ul.list{margin:0;padding-left:18px}
 .hint{font-size:12px;color:var(--muted)}
@@ -96,6 +97,7 @@ ul.list{margin:0;padding-left:18px}
     <div class="ctl">
       <button class="btn" id="bDia" aria-pressed="false" title="Fijar luz de día">Siempre de día</button>
       <button class="btn" id="bNoche" aria-pressed="false" title="Ver de noche">Ver de noche</button>
+      <button class="btn" id="bEstilo" aria-pressed="false" title="Cambiar entre imagen satelital y relieve ilustrado">Relieve</button>
       <button class="btn" id="bSon" aria-pressed="true" title="Ambiente: agua, viento, aves">Sonido</button>
       <button class="btn" id="bMus" aria-pressed="true" title="Música suave generada: pentatónica andina, quena, gotas de agua">Música</button>
     </div>
@@ -109,6 +111,7 @@ ul.list{margin:0;padding-left:18px}
     <div class="hint">Cada capa tiene su propio símbolo; el color indica el valor. Borde continuo = dato medido · discontinuo = declarado.</div>
   </div>
   <aside class="ui hidden" id="side" aria-live="polite"></aside>
+  <div class="ui" id="attrib">Imágenes © Esri, Maxar, Earthstar Geographics · Relieve © Esri, USGS, NOAA</div>
 </div>
 
 <script id="data-termas" type="application/json">__TERMAS__</script>
@@ -147,9 +150,13 @@ const zoneOf = id => ZONAS.find(z=>z.id===id);
 
 /* ---------- Proyección y cámara ---------- */
 const cam = {lat:-37.5, lon:-71.2, s: 0, target:null, t0:0, from:null, dur:1200};
-function fitChile(){ const s=Math.min(H/40, W/14); return {lat:-37.2, lon:-70.8, s:s}; }
-function proj(lat,lon){ const kx = Math.cos(cam.lat*Math.PI/180); return [W/2 + (lon-cam.lon)*cam.s*kx, H/2 - (lat-cam.lat)*cam.s]; }
-function unproj(x,y){ const kx = Math.cos(cam.lat*Math.PI/180); return [cam.lat - (y-H/2)/cam.s, cam.lon + (x-W/2)/(cam.s*kx)]; }
+/* Proyección Web Mercator: cam.s = píxeles por grado de longitud (coincide con las teselas de mapa). */
+const R2D=180/Math.PI, D2R=Math.PI/180;
+const mY=lat=>Math.log(Math.tan(Math.PI/4+Math.max(-85,Math.min(85,lat))*D2R/2))*R2D; // "grados" mercator
+const mLat=y=>(2*Math.atan(Math.exp(y*D2R))-Math.PI/2)*R2D;
+function fitChile(){ const s=Math.min(H/(mY(-17.5)-mY(-56)+2), W/15); return {lat:mLat((mY(-17.5)+mY(-56))/2), lon:-70.8, s:s}; }
+function proj(lat,lon){ return [W/2 + (lon-cam.lon)*cam.s, H/2 - (mY(lat)-mY(cam.lat))*cam.s]; }
+function unproj(x,y){ return [mLat(mY(cam.lat) - (y-H/2)/cam.s), cam.lon + (x-W/2)/cam.s]; }
 const ease = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
 function flyTo(lat,lon,s,dur){ cam.from={lat:cam.lat,lon:cam.lon,s:cam.s}; cam.target={lat,lon,s}; cam.t0=performance.now(); cam.dur=reduced?0:(dur||1300); }
 function stepCam(now){ if(!cam.target) return; const k=cam.dur?Math.min(1,(now-cam.t0)/cam.dur):1, e=ease(k); cam.lat=cam.from.lat+(cam.target.lat-cam.from.lat)*e; cam.lon=cam.from.lon+(cam.target.lon-cam.from.lon)*e; cam.s=cam.from.s+(cam.target.s-cam.from.s)*e; if(k>=1) cam.target=null; }
@@ -158,8 +165,8 @@ function stepCam(now){ if(!cam.target) return; const k=cam.dur?Math.min(1,(now-c
 let nivel=0, zonaSel=null, termaSel=null;
 const crumbs=document.getElementById('crumbs'), side=document.getElementById('side');
 function goChile(){ nivel=0; zonaSel=null; termaSel=null; const f=fitChile(); flyTo(f.lat,f.lon,f.s); renderCrumbs(); side.classList.add('hidden'); }
-function goZona(z){ nivel=1; zonaSel=z; termaSel=null; const span=z.lat[1]-z.lat[0]; const s=Math.min(H/(span*1.25), W/9); flyTo(z.c[0],z.c[1],s,1400); renderCrumbs(); renderZona(z); }
-function goTerma(t){ nivel=2; termaSel=t; const z=zoneOf(t.z); zonaSel=z||zonaSel; flyTo(t.lat,t.lon,Math.max(cam.s*2.2, Math.min(W,H)/1.2),1200); renderCrumbs(); renderTerma(t); }
+function goZona(z){ nivel=1; zonaSel=z; termaSel=null; const span=mY(z.lat[1])-mY(z.lat[0]); const s=Math.min(H/(span*1.25), W/9); flyTo(z.c[0],z.c[1],s,1400); renderCrumbs(); renderZona(z); }
+function goTerma(t){ nivel=2; termaSel=t; const z=zoneOf(t.z); zonaSel=z||zonaSel; flyTo(t.lat,t.lon,Math.max(cam.s*2.2, Math.min(W,H)*1.6),1200); renderCrumbs(); renderTerma(t); }
 function renderCrumbs(){ let h='<button data-go="chile">Chile</button>'; if(zonaSel){h+='<span class="sep">›</span><button data-go="zona">'+zonaSel.n+'</button>';} if(termaSel){h+='<span class="sep">›</span><button data-go="terma">'+termaSel.n+'</button>';} crumbs.innerHTML=h; }
 crumbs.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.go==='chile') goChile(); else if(b.dataset.go==='zona') goZona(zonaSel); });
 
@@ -265,7 +272,7 @@ function fbm(x,y){ return vnoise(x,y)*.5+vnoise(x*2.1,y*2.1)*.25+vnoise(x*4.3,y*
 })();
 function hAt(lat,lon){ const i=Math.floor((lon-DEM.lon0)/DEM.d), j=Math.floor((DEM.lat0-lat)/DEM.d); if(i<0||j<0||i>=DEM.nx||j>=DEM.ny) return 0; return DEM.h[j*DEM.nx+i]; }
 const EXAG=0.4/6000; // grados de latitud de desplazamiento por metro (≈6× exagerado)
-function projT(lat,lon){ const p=proj(lat,lon); p[1]-=hAt(lat,lon)*EXAG*cam.s; return p; }
+function projT(lat,lon){ return proj(lat,lon); } // sin desplazamiento: el relieve ahora viene de las teselas (sombreado real)
 let tcan=document.createElement('canvas'), tctx=tcan.getContext('2d'), tbuf=null;
 function tint(h,lat,l){ // color hipsométrico que cambia con la latitud (desierto → bosque → estepa/hielo)
   const f=Math.max(0,Math.min(1,(-lat-17)/39)); let r,g,b;
@@ -299,16 +306,32 @@ function drawTerreno(l){ const sw=Math.ceil(W/2), shh=Math.ceil(H/2); if(tcan.wi
           for(let yy=ya;yy<yb;yy++){ let o=(yy*sw+xa)*4; for(let xx=xa;xx<xb;xx++){ px[o]=r; px[o+1]=g; px[o+2]=b; o+=4; } }
           if(yc>yb){ const r2=(r*.72)|0,g2=(g*.72)|0,b2=(b*.72)|0; for(let yy=Math.max(0,yb);yy<yc;yy++){ let o=(yy*sw+xa)*4; for(let xx=xa;xx<xb;xx++){ px[o]=r2; px[o+1]=g2; px[o+2]=b2; o+=4; } } } } } } }
   tctx.putImageData(tbuf,0,0); ctx.imageSmoothingEnabled=true; ctx.drawImage(tcan,0,0,W,H); }
-function drawChile(l){ drawTerreno(l);
-  ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1; CHILE.features[0].geometry.coordinates.forEach(poly=>{ ctx.beginPath(); poly[0].forEach((p,i)=>{ const [x,y]=projT(p[1],p[0]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.closePath(); ctx.stroke(); });
+/* ---------- Capa base: teselas raster reales (Web Mercator) ---------- */
+let estilo='sat'; // 'sat' = World Imagery (Esri) · 'relieve' = World Physical (z≤8) + Shaded Relief
+const TILES={ sat:(z,x,y)=>'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'+z+'/'+y+'/'+x,
+  relieve:(z,x,y)=>'https://server.arcgisonline.com/ArcGIS/rest/services/'+(z<=8?'World_Physical_Map':'World_Shaded_Relief')+'/MapServer/tile/'+z+'/'+y+'/'+x };
+const tcache=new Map(); let tilesPend=0;
+function tile(st,z,x,y){ const k=st+'/'+z+'/'+x+'/'+y; let t=tcache.get(k); if(t) return t; if(tilesPend>24) return null; t={img:new Image(),ok:false,err:false}; t.img.crossOrigin='anonymous'; tilesPend++; t.img.onload=()=>{t.ok=true;tilesPend--;}; t.img.onerror=()=>{t.err=true;tilesPend--;}; t.img.src=TILES[st](z,x,y); tcache.set(k,t); if(tcache.size>900){ const first=tcache.keys().next().value; tcache.delete(first); } return t; }
+function drawTeselas(l){ const n=256; const worldPx=360*cam.s; let z=Math.round(Math.log2(worldPx/n)); z=Math.max(2,Math.min(estilo==='sat'?17:13,z)); const N=1<<z; const sc=worldPx/(N*n); // escala de cada tesela en pantalla
+  const [laT,loL]=unproj(0,0), [laB,loR]=unproj(W,H); const tx0=Math.floor((loL+180)/360*N), tx1=Math.floor((loR+180)/360*N); const ty=la=>Math.floor((1-Math.log(Math.tan(la*D2R)+1/Math.cos(la*D2R))/Math.PI)/2*N); const ty0=Math.max(0,ty(laT)), ty1=Math.min(N-1,ty(laB));
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  for(let x=tx0;x<=tx1;x++) for(let y=ty0;y<=ty1;y++){ const lon=x/N*360-180; const lat=mLat(180-y/N*360); const [px,py]=proj(lat,lon); const w=n*sc+.6;
+    let t=tile(estilo,z,x,y); let drawn=false; if(t&&t.ok){ ctx.drawImage(t.img,px,py,w,w); drawn=true; }
+    if(!drawn){ // mientras carga, usa la tesela "madre" recortada (hasta 4 niveles)
+      for(let d=1;d<=4&&!drawn;d++){ const pz=z-d; if(pz<2) break; const pt=tcache.get(estilo+'/'+pz+'/'+(x>>d)+'/'+(y>>d)); if(pt&&pt.ok){ const f=1<<d; const sx=(x%f)*(n/f), sy=(y%f)*(n/f); ctx.drawImage(pt.img,sx,sy,n/f,n/f,px,py,w,w); drawn=true; } }
+      if(!drawn){ ctx.fillStyle='rgb('+Math.round(14+30*l)+','+Math.round(26+50*l)+','+Math.round(44+70*l)+')'; ctx.fillRect(px,py,w,w); } }
+  }
+  if(estilo==='relieve'){ ctx.fillStyle='rgba(201,168,106,'+(.10+.08*(1-l))+')'; ctx.fillRect(0,0,W,H); }
+}
+function drawChile(l){ drawTeselas(l);
   const font=getComputedStyle(document.body).fontFamily;
   if(cam.s>40){
-    RIOS.forEach(r=>{ if(r[0]===2&&cam.s<110) return; ctx.strokeStyle='rgba(79,179,217,'+(r[0]===1?.75:.55)+')'; ctx.lineWidth=Math.max(1,cam.s/(r[0]===1?60:110)); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.beginPath(); r[2].forEach((p,i)=>{const [x,y]=projT(p[0],p[1]); i?ctx.lineTo(x,y):ctx.moveTo(x,y);}); ctx.stroke(); if(cam.s>260){ const mid=r[2][Math.floor(r[2].length/2)]; const [x,y]=projT(mid[0],mid[1]); ctx.fillStyle='rgba(79,179,217,.95)'; ctx.font='italic 11px '+font; ctx.fillText(r[1],x+4,y-4); } });
+    if(cam.s>260){ RIOS.forEach(r=>{ const mid=r[2][Math.floor(r[2].length/2)]; const [x,y]=projT(mid[0],mid[1]); if(x<0||x>W||y<0||y>H) return; ctx.fillStyle='rgba(190,230,250,.9)'; ctx.font='italic 11px '+font; ctx.fillText(r[1],x+4,y-4); }); }
     if(cam.s>80){ RUTAS.forEach(R=>{ ctx.strokeStyle='rgba(232,238,242,.35)'; ctx.lineWidth=Math.max(1,cam.s/160); ctx.setLineDash([Math.max(3,cam.s/40),Math.max(3,cam.s/60)]); ctx.beginPath(); R[1].forEach((p,i)=>{const [x,y]=projT(p[0],p[1]); i?ctx.lineTo(x,y):ctx.moveTo(x,y);}); ctx.stroke(); ctx.setLineDash([]); if(cam.s>200){ const mid=R[1][Math.floor(R[1].length/2)]; const [x,y]=projT(mid[0],mid[1]); ctx.fillStyle='rgba(232,238,242,.6)'; ctx.font='10px '+font; ctx.fillText(R[0],x+6,y+12); } }); }
-    CIUDADES.forEach(C=>{ if(C[3]===2&&cam.s<150) return; if(C[3]===1&&cam.s<80) return; const [x,y]=projT(C[0],C[1]); if(x<-40||x>W+40||y<-20||y>H+20) return; const r=C[3]===1?Math.min(7,Math.max(3,cam.s/70)):Math.min(5,Math.max(2,cam.s/120)); ctx.fillStyle=C[3]===1?'rgba(232,238,242,.95)':'rgba(232,238,242,.75)'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); if(C[3]===1){ ctx.strokeStyle='rgba(11,20,32,.8)'; ctx.lineWidth=1; ctx.stroke(); } ctx.font=(C[3]===1?'600 12px ':'11px ')+font; ctx.fillStyle='rgba(232,238,242,'+(C[3]===1?.95:.8)+')'; ctx.fillText(C[2],x+r+4,y+4); });
+    CIUDADES.forEach(C=>{ if(C[3]===2&&cam.s<150) return; if(C[3]===1&&cam.s<80) return; const [x,y]=projT(C[0],C[1]); if(x<-40||x>W+40||y<-20||y>H+20) return; const r=C[3]===1?Math.min(7,Math.max(3,cam.s/70)):Math.min(5,Math.max(2,cam.s/120)); ctx.fillStyle=C[3]===1?'rgba(232,238,242,.95)':'rgba(232,238,242,.75)'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); if(C[3]===1){ ctx.strokeStyle='rgba(11,20,32,.8)'; ctx.lineWidth=1; ctx.stroke(); } ctx.font=(C[3]===1?'600 12px ':'11px ')+font; ctx.lineWidth=3; ctx.strokeStyle='rgba(8,14,24,.7)'; ctx.strokeText(C[2],x+r+4,y+4); ctx.fillStyle='rgba(232,238,242,'+(C[3]===1?.95:.85)+')'; ctx.fillText(C[2],x+r+4,y+4); });
     if(cam.s>120){ ctx.strokeStyle='rgba(232,238,242,.08)'; ctx.lineWidth=1; for(let la=-17;la>=-56;la--){ const y=proj(la,-71)[1]; if(y<0||y>H) continue; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); ctx.fillStyle='rgba(232,238,242,.35)'; ctx.font='10px '+font; ctx.fillText(Math.abs(la)+'° S',8,y-3); } }
-    LAGOS.forEach(L=>{ const [x,y]=projT(L[0],L[1]); const r=L[2]*cam.s; ctx.fillStyle=L[3]; ctx.globalAlpha=.85; ctx.beginPath(); ctx.ellipse(x,y,r*1.3,r,0,0,6.28); ctx.fill(); ctx.globalAlpha=1; if(cam.s>160){ ctx.fillStyle='rgba(232,238,242,.75)'; ctx.font='11px '+font; ctx.fillText(L[4],x+r*1.3+4,y+4);} });
-    VOLCANES.forEach(V=>{ const [x,y]=projT(V[0],V[1]); const r=Math.min(14,Math.max(4,cam.s/18)); ctx.fillStyle='rgba(70,55,50,.9)'; ctx.beginPath(); ctx.moveTo(x,y-r); ctx.lineTo(x+r*.9,y+r*.6); ctx.lineTo(x-r*.9,y+r*.6); ctx.closePath(); ctx.fill(); ctx.fillStyle='rgba(255,255,255,.85)'; ctx.beginPath(); ctx.moveTo(x,y-r); ctx.lineTo(x+r*.35,y-r*.35); ctx.lineTo(x-r*.35,y-r*.35); ctx.closePath(); ctx.fill(); if(cam.s>160){ ctx.fillStyle='rgba(232,238,242,.75)'; ctx.font='11px '+font; ctx.fillText(V[2],x+r+4,y+4);} });
+    if(cam.s>160){ LAGOS.forEach(L=>{ const [x,y]=projT(L[0],L[1]); if(x<0||x>W||y<0||y>H) return; ctx.fillStyle='rgba(200,235,250,.85)'; ctx.font='italic 11px '+font; ctx.fillText(L[4],x+4,y+4); }); }
+    VOLCANES.forEach(V=>{ const [x,y]=projT(V[0],V[1]); if(x<0||x>W||y<0||y>H) return; const r=Math.min(9,Math.max(4,cam.s/40)); ctx.fillStyle='rgba(255,255,255,.85)'; ctx.beginPath(); ctx.moveTo(x,y-r); ctx.lineTo(x+r*.8,y+r*.55); ctx.lineTo(x-r*.8,y+r*.55); ctx.closePath(); ctx.fill(); ctx.strokeStyle='rgba(20,20,20,.6)'; ctx.lineWidth=1; ctx.stroke(); if(cam.s>160){ ctx.font='11px '+font; ctx.lineWidth=3; ctx.strokeStyle='rgba(8,14,24,.7)'; ctx.strokeText(V[2],x+r+4,y+4); ctx.fillStyle='rgba(232,238,242,.9)'; ctx.fillText(V[2],x+r+4,y+4);} });
   }
 }
 function drawZonas(l){ ZONAS.forEach(z=>{ const [x0,y0]=proj(z.lat[1],-76), [x1,y1]=proj(z.lat[0],-66); const hov=(z===hoverZona); ctx.fillStyle=hov?'rgba(255,154,60,.12)':'rgba(255,255,255,0)'; ctx.fillRect(x0,y0,x1-x0,y1-y0); ctx.strokeStyle='rgba(232,238,242,'+(hov?.5:.15)+')'; ctx.setLineDash([4,6]); ctx.beginPath(); ctx.moveTo(x0,y1); ctx.lineTo(x1,y1); ctx.stroke(); ctx.setLineDash([]); if(nivel===0){ const [lx,ly]=proj((z.lat[0]+z.lat[1])/2, z.c[1]+3.2); ctx.fillStyle='rgba(232,238,242,'+(hov?1:.7)+')'; ctx.font=(hov?'600 ':'500 ')+Math.max(11,Math.min(15,cam.s*.5))+'px '+getComputedStyle(document.querySelector('h1')).fontFamily; ctx.fillText(z.n,lx,ly); } }); }
@@ -420,10 +443,10 @@ side.addEventListener('click',e=>{ const a=e.target.closest('a[data-t]'); if(a){
 /* ---------- Interacción con el mapa ---------- */
 let drag=null;
 canvas.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,lat:cam.lat,lon:cam.lon,moved:false}; canvas.classList.add('grabbing'); canvas.setPointerCapture(e.pointerId); });
-canvas.addEventListener('pointermove',e=>{ if(drag){ const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(Math.abs(dx)+Math.abs(dy)>4) drag.moved=true; if(drag.moved&&nivel>0){ cam.target=null; const kx=Math.cos(cam.lat*Math.PI/180); cam.lat=drag.lat+dy/cam.s; cam.lon=drag.lon-dx/(cam.s*kx);} return; }
+canvas.addEventListener('pointermove',e=>{ if(drag){ const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(Math.abs(dx)+Math.abs(dy)>4) drag.moved=true; if(drag.moved&&nivel>0){ cam.target=null; const kx=Math.cos(cam.lat*Math.PI/180); cam.lat=mLat(mY(drag.lat)+dy/cam.s); cam.lon=drag.lon-dx/cam.s;} return; }
   const [la,lo]=unproj(e.clientX,e.clientY); hoverZona=nivel===0?ZONAS.find(z=>la>=z.lat[0]&&la<z.lat[1]&&lo>-76&&lo<-66):null; hoverTerma=null; if(nivel>0){ let best=null,bd=12; visibles().forEach(t=>{ const [x,y]=projT(t.lat,t.lon); const d=Math.hypot(x-e.clientX,y-e.clientY); if(d<bd){bd=d;best=t;} }); hoverTerma=best; } canvas.style.cursor=(hoverZona||hoverTerma)?'pointer':(drag?'grabbing':'grab'); });
 canvas.addEventListener('pointerup',e=>{ const moved=drag&&drag.moved; drag=null; canvas.classList.remove('grabbing'); if(moved) return; if(nivel===0){ if(hoverZona) goZona(hoverZona); return; } if(hoverTerma) goTerma(hoverTerma); });
-canvas.addEventListener('wheel',e=>{ e.preventDefault(); cam.target=null; const [la,lo]=unproj(e.clientX,e.clientY); const f=Math.exp(-e.deltaY*.0015); cam.s=Math.max(fitChile().s*.8,Math.min(6000,cam.s*f)); if(nivel===0&&cam.s>fitChile().s*1.6){ nivel=1; zonaSel=ZONAS.find(z=>la>=z.lat[0]&&la<z.lat[1])||ZONAS[4]; renderCrumbs(); renderZona(zonaSel); } const [la2,lo2]=unproj(e.clientX,e.clientY); cam.lat+=la-la2; cam.lon+=lo-lo2; },{passive:false});
+canvas.addEventListener('wheel',e=>{ e.preventDefault(); cam.target=null; const [la,lo]=unproj(e.clientX,e.clientY); const f=Math.exp(-e.deltaY*.0015); cam.s=Math.max(fitChile().s*.8,Math.min(40000,cam.s*f)); if(nivel===0&&cam.s>fitChile().s*1.6){ nivel=1; zonaSel=ZONAS.find(z=>la>=z.lat[0]&&la<z.lat[1])||ZONAS[4]; renderCrumbs(); renderZona(zonaSel); } const [la2,lo2]=unproj(e.clientX,e.clientY); cam.lat+=la-la2; cam.lon+=lo-lo2; },{passive:false});
 addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(nivel===2) goZona(zonaSel); else if(nivel===1) goChile(); } });
 
 /* ---------- Sonido sintetizado (sin archivos externos) ---------- */
@@ -471,6 +494,7 @@ function programar(){ if(!mus) return; const l=zonaSel?luz(zonaSel.c[0],zonaSel.
   musTimer=setTimeout(programar,paso); }
 document.getElementById('bMus').addEventListener('click',e=>{ mus=!mus; e.currentTarget.setAttribute('aria-pressed',mus); if(mus){ if(!AC) startAudio(); if(!M.out) startMusic(); else { M.out.gain.setTargetAtTime(.5,AC.currentTime,1); programar(); } AC.resume(); if(!son) nodes.master.gain.setTargetAtTime(0,AC.currentTime,.1); } else { clearTimeout(musTimer); if(M.out) M.out.gain.setTargetAtTime(0,AC.currentTime,1.2); if(!son&&AC) setTimeout(()=>{ if(!son&&!mus) AC.suspend(); },1800); } });
 document.getElementById('bDia').addEventListener('click',e=>{ modoLuz=modoLuz==='dia'?'real':'dia'; e.currentTarget.setAttribute('aria-pressed',modoLuz==='dia'); document.getElementById('bNoche').setAttribute('aria-pressed','false'); });
+document.getElementById('bEstilo').addEventListener('click',e=>{ estilo=estilo==='sat'?'relieve':'sat'; e.currentTarget.setAttribute('aria-pressed',estilo==='relieve'); e.currentTarget.textContent=estilo==='sat'?'Relieve':'Satélite'; });
 document.getElementById('bNoche').addEventListener('click',e=>{ modoLuz=modoLuz==='noche'?'real':'noche'; e.currentTarget.setAttribute('aria-pressed',modoLuz==='noche'); document.getElementById('bDia').setAttribute('aria-pressed','false'); });
 
 
