@@ -81,6 +81,20 @@ h1 small{font-weight:400;color:var(--muted);font-size:.7em;margin-left:.5em}
 .acciones .star{font-size:11px;opacity:.85;margin-left:2px}
 #status{left:max(16px,env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 58px);font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;backdrop-filter:blur(8px);max-width:min(320px,calc(100vw - 32px))}
 #status b{color:var(--fg);font-weight:700}
+/* Buscador: barra pequeña y translúcida en la esquina superior derecha; se vuelve opaca al usarla */
+#buscar{right:max(16px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 58px);width:min(300px,calc(100vw - 32px))}
+#buscar .caja{display:flex;align-items:center;gap:6px;background:rgba(14,24,36,.42);border:1px solid rgba(159,176,189,.25);border-radius:999px;padding:5px 10px 5px 12px;backdrop-filter:blur(8px);transition:background .25s,border-color .25s,box-shadow .25s}
+#buscar.on .caja,#buscar .caja:hover{background:var(--panel);border-color:var(--line)}
+#buscar.on .caja{box-shadow:0 6px 24px rgba(0,0,0,.25);border-color:var(--agua)}
+#buscar input{flex:1;min-width:0;background:transparent;border:0;color:var(--fg);font:inherit;font-size:13px;outline:none}
+#buscar input::placeholder{color:var(--muted)}
+#buscar svg{width:14px;height:14px;color:var(--muted);flex:none}
+#sug{margin-top:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;backdrop-filter:blur(10px);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#sug:empty{display:none}
+#sug button{display:flex;width:100%;align-items:center;gap:8px;background:none;border:0;color:var(--fg);font:inherit;font-size:13px;text-align:left;padding:7px 12px;cursor:pointer}
+#sug button:hover,#sug button[aria-selected="true"]{background:rgba(255,154,60,.16)}
+#sug button small{color:var(--muted);font-size:11px;margin-left:auto;white-space:nowrap}
+#sug button i{font-style:normal;width:16px;text-align:center;color:var(--calor)}
 #attrib{right:max(8px,env(safe-area-inset-right,0px));bottom:max(4px,env(safe-area-inset-bottom,0px));font-size:10px;color:rgba(232,238,242,.75);background:rgba(8,14,24,.45);padding:2px 6px;border-radius:6px;z-index:4}
 a{color:var(--agua)}
 ul.list{margin:0;padding-left:18px}
@@ -103,6 +117,7 @@ ul.list{margin:0;padding-left:18px}
     </div>
   </div>
   <div class="ui" id="status"></div>
+  <div class="ui" id="buscar"><div class="caja"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg><input id="q" type="search" placeholder="Buscar terma, localidad o zona…" autocomplete="off" spellcheck="false" aria-label="Buscar"></div><div id="sug" role="listbox"></div></div>
   <div class="ui" id="legend">
     <h4>Capas <span class="hint" style="text-transform:none;letter-spacing:0;font-weight:400">(elige una o varias)</span></h4>
     <div class="capas" id="capasBtns"></div>
@@ -191,8 +206,19 @@ ZONAS.forEach(z=>{ const b=climaBase[z.id]; const est=estacion(); const wet=(est
 
 /* ---------- Sprites (dibujo propio, formas planas) ---------- */
 const sprites=[]; window.__sprites=sprites; let sereno=false; // animaciones siempre activas (decisión 22-10-2026)
-const MAX=56;
-function spawn(z){ if(sereno||sprites.length>=MAX||!zonaSel) return; const night=luz(z.c[0],z.c[1])<.35; const b=z.bioma; const pool=[];
+const MAX=64;
+function landAt(lat,lon){ const i=Math.floor((lon-DEM.lon0)/DEM.d), j=Math.floor((DEM.lat0-lat)/DEM.d); if(i<0||j<0||i>=DEM.nx||j>=DEM.ny) return 0; return DEM.land[j*DEM.nx+i]; }
+function spawnVehiculos(z){ const [laT,loL]=unproj(0,0), [laB,loR]=unproj(W,H); const cnt=k=>sprites.filter(x=>x.k===k).length; const r=Math.random();
+  // aviones y avionetas: cruzan la pantalla en línea recta (aviones alto y rápido, avionetas bajo y lento)
+  if(r<.12&&cnt('avion')<2&&cam.s>20){ const lat=laB+Math.random()*(laT-laB); const dir=Math.random()<.5?1:-1; sprites.push({k:'avion',lat,lon:dir>0?loL-.3:loR+.3,dir,vl:(laT-laB)*(Math.random()-.5)*.0006,v:.00018+Math.random()*.00008,t:0,life:60000,ph:0,trail:[]}); return true; }
+  if(r<.22&&cnt('avioneta')<2&&cam.s>60&&(z.id>=6||Math.random()<.4)){ const lat=laB+Math.random()*(laT-laB); const dir=Math.random()<.5?1:-1; sprites.push({k:'avioneta',lat,lon:dir>0?loL-.2:loR+.2,dir,vl:(Math.random()-.5)*.00004,v:.00007+Math.random()*.00004,t:0,life:60000,ph:Math.random()*6.28}); return true; }
+  // barcos en el mar (fuera del polígono de Chile y al oeste de los Andes)
+  if(r<.40&&cnt('barco')<3&&cam.s>30){ for(let i=0;i<10;i++){ const lat=laB+Math.random()*(laT-laB), lon=loL+Math.random()*(loR-loL); if(lon<-70&&!landAt(lat,lon)&&(lat>-41.5||lon<-73.2||landAt(lat,lon+.6)===0)){ const grande=Math.random()<.4; sprites.push({k:'barco',lat,lon,dir:Math.random()<.5?1:-1,hd:(Math.random()-.5)*.6,v:(grande?.000012:.00002)+Math.random()*.00001,g:grande,t:0,life:50000+Math.random()*30000,ph:Math.random()*6.28}); return true; } } }
+  // botes en lagos y kayaks en ríos
+  if(r<.62&&cnt('bote')<4&&cam.s>90){ const vis=LAGOS.filter(L=>{ const [x,y]=proj(L[0],L[1]); return x>0&&x<W&&y>0&&y<H&&L[3]!=='#efe8d6'; }); if(vis.length){ const L=vis[Math.floor(Math.random()*vis.length)]; const a=Math.random()*6.28, d=Math.random()*.55; sprites.push({k:'bote',lat:L[0]+Math.sin(a)*L[2]*d,lon:L[1]+Math.cos(a)*L[2]*1.3*d,c:[L[0],L[1],L[2]],dir:Math.random()<.5?1:-1,hd:(Math.random()-.5)*.8,v:.000008+Math.random()*.000008,t:0,life:40000+Math.random()*20000,ph:Math.random()*6.28}); return true; } }
+  if(r<.75&&cnt('kayak')<3&&cam.s>110){ const cand=RIOS.map((R,ri)=>[ri,R[2].map((p,i)=>i).slice(0,-1).filter(i=>{ const [x,y]=proj(R[2][i][0],R[2][i][1]); return x>0&&x<W&&y>0&&y<H; })]).filter(c=>c[1].length); if(cand.length){ const c=cand[Math.floor(Math.random()*cand.length)]; sprites.push({k:'kayak',ri:c[0],seg:c[1][Math.floor(Math.random()*c[1].length)],u:Math.random(),dir:1,v:.000012+Math.random()*.00001,t:0,life:40000,lat:0,lon:0,ph:Math.random()*6.28}); return true; } }
+  return false; }
+function spawn(z){ if(sereno||sprites.length>=MAX||!zonaSel) return; if(Math.random()<.3&&spawnVehiculos(z)) return; const night=luz(z.c[0],z.c[1])<.35; const b=z.bioma; const pool=[];
   if(night){ pool.push('zorro','buho','luciernaga'); if(b==='valdiviano'||b==='araucaria') pool.push('monito'); if(b==='altiplano'||b==='puna') pool.push('vizcacha'); if(b!=='estepa') pool.push('murcielago'); }
   else { pool.push('ave'); if(b==='altiplano'||b==='puna'){ pool.push('vicuna','flamenco','llamas','condor'); } if(b==='semiarido'||b==='mediterraneo'){ pool.push('condor','mariposa','abeja','huaso'); } if(b==='araucaria'){ pool.push('pudu','carpintero','mariposa','pewenche'); } if(b==='valdiviano'){ pool.push('chucao','cisne','mariposa','lanchero'); } if(b==='patagonia'||b==='estepa'){ pool.push('ovejas','nandu','condor','gaucho'); if(b==='patagonia') pool.push('huemul'); } }
   // autos: pocos, solo con zoom suficiente para ver las rutas; de noche llevan luces
@@ -205,7 +231,18 @@ function spawn(z){ if(sereno||sprites.length>=MAX||!zonaSel) return; const night
   sprites.push(base);
 }
 function drawSprite(s,now,dt){ s.t+=dt; const alpha=Math.min(1,s.t/1500,(s.life-s.t)/1500); if(alpha<=0) return false;
-  if(s.k==='auto'){ if(cam.s<=80) return false; const P=RUTAS[s.ri][1]; let a=P[s.seg],b=P[s.seg+1]; const len=Math.hypot(b[0]-a[0],(b[1]-a[1])*Math.cos(a[0]*Math.PI/180)); s.u+=s.dir*s.v*dt*30/Math.max(len,.05); if(s.u>1||s.u<0){ s.seg+=s.dir; if(s.seg<0||s.seg>=P.length-1) return false; s.u=s.u>1?0:1; a=P[s.seg]; b=P[s.seg+1]; }
+  if(s.k==='avion'||s.k==='avioneta'){ s.lon+=s.v*dt*s.dir; s.lat+=s.vl*dt; const [x,y]=projT(s.lat,s.lon); if(x<-120||x>W+120||y<-120||y>H+120) return s.t<4000; const av=s.k==='avion'; const sc=av?Math.max(.9,Math.min(1.8,cam.s/150)):Math.max(.7,Math.min(1.4,cam.s/150)); const night=luz(s.lat,s.lon)<.4;
+    if(av){ s.trail.push([x,y]); if(s.trail.length>26) s.trail.shift(); ctx.lineWidth=2.2*sc; ctx.lineCap='round'; for(let i=1;i<s.trail.length;i++){ ctx.strokeStyle='rgba(255,255,255,'+(.35*i/s.trail.length)+')'; ctx.beginPath(); ctx.moveTo(s.trail[i-1][0],s.trail[i-1][1]); ctx.lineTo(s.trail[i][0],s.trail[i][1]); ctx.stroke(); } }
+    ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.rotate(Math.atan2(-s.vl*cam.s,s.v*cam.s*s.dir)); ctx.scale(sc,sc); ctx.fillStyle=av?'#f4f6f8':'#ffd166'; ctx.beginPath(); ctx.moveTo(9,0); ctx.lineTo(-6,-1.6); ctx.lineTo(-8,0); ctx.lineTo(-6,1.6); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(1,0); ctx.lineTo(-3,-7); ctx.lineTo(-5,-7); ctx.lineTo(-2,0); ctx.lineTo(-5,7); ctx.lineTo(-3,7); ctx.closePath(); ctx.fill(); ctx.fillRect(-8,-3,1.5,6); if(night){ ctx.fillStyle=Math.sin(now/120)>.6?'#ff3b3b':'rgba(255,60,60,.3)'; ctx.beginPath(); ctx.arc(-4,-6.5,1.2,0,6.28); ctx.fill(); ctx.fillStyle=Math.sin(now/120)>.6?'#5df07a':'rgba(90,240,120,.3)'; ctx.beginPath(); ctx.arc(-4,6.5,1.2,0,6.28); ctx.fill(); } ctx.restore(); return s.t<s.life; }
+  if(s.k==='barco'||s.k==='bote'){ const ang=s.hd; s.lon+=Math.cos(ang)*s.v*dt*s.dir; s.lat+=Math.sin(ang)*s.v*dt*s.dir*.6; if(s.k==='bote'){ const dl=(s.lat-s.c[0])/s.c[2], dn=(s.lon-s.c[1])/(s.c[2]*1.3); if(dl*dl+dn*dn>.55) s.dir*=-1; } else if(landAt(s.lat,s.lon)) s.dir*=-1;
+    const [x,y]=projT(s.lat,s.lon); if(x<-60||x>W+60||y<-60||y>H+60) return s.t<s.life; const sc=Math.max(.6,Math.min(1.6,cam.s/200))*(s.g?1.5:1)*(s.k==='bote'?.7:1); const night=luz(s.lat,s.lon)<.4;
+    ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.rotate(Math.atan2(-Math.sin(ang)*.6,Math.cos(ang))*(s.dir>0?1:1)); if(s.dir<0) ctx.scale(-1,1); ctx.scale(sc,sc);
+    ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(-6,0); ctx.lineTo(-22,-3.5); ctx.moveTo(-6,0); ctx.lineTo(-22,3.5); ctx.stroke(); // estela
+    ctx.fillStyle=s.k==='bote'?'#e0b48c':s.g?'#d7dde3':'#f1f1f1'; ctx.beginPath(); ctx.moveTo(8,0); ctx.lineTo(3,-2.6); ctx.lineTo(-7,-2.6); ctx.lineTo(-7,2.6); ctx.lineTo(3,2.6); ctx.closePath(); ctx.fill(); if(s.k!=='bote'){ ctx.fillStyle=s.g?'#c62828':'#2d6cdf'; ctx.fillRect(-4,-1.4,5,2.8); } else { ctx.strokeStyle='#f4f4f4'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-6); ctx.lineTo(4,-1); ctx.stroke(); }
+    if(night){ ctx.fillStyle='#fff3b0'; ctx.beginPath(); ctx.arc(0,0,1.1,0,6.28); ctx.fill(); } ctx.restore(); return s.t<s.life; }
+  if(s.k==='kayak'){ if(cam.s<=90) return false; const P=RIOS[s.ri][2]; let a=P[s.seg],b=P[s.seg+1]; const len=Math.hypot(b[0]-a[0],b[1]-a[1]); s.u+=s.v*dt*1.6/Math.max(len,.05); if(s.u>1){ s.seg++; if(s.seg>=P.length-1) return false; s.u=0; a=P[s.seg]; b=P[s.seg+1]; } s.lat=a[0]+(b[0]-a[0])*s.u; s.lon=a[1]+(b[1]-a[1])*s.u; const [x,y]=projT(s.lat,s.lon); if(x<-40||x>W+40||y<-40||y>H+40) return s.t<s.life; const [x2,y2]=projT(b[0],b[1]); const ang=Math.atan2(y2-y,x2-x); const sc=Math.max(.6,Math.min(1.4,cam.s/220));
+    ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.rotate(ang); ctx.scale(sc,sc); ctx.fillStyle='#e85d04'; ctx.beginPath(); ctx.ellipse(0,0,6,1.6,0,0,6.28); ctx.fill(); ctx.strokeStyle='#f4f4f4'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(-3,-4+Math.sin(now/180+s.ph)*2); ctx.lineTo(3,4-Math.sin(now/180+s.ph)*2); ctx.stroke(); ctx.restore(); return s.t<s.life; }
+  if(s.k==='auto'){ if(cam.s<=80) return false; const P=RUTAS[s.ri][1]; let a=P[s.seg],b=P[s.seg+1]; const len=Math.hypot(b[0]-a[0],(b[1]-a[1])*Math.cos(a[0]*Math.PI/180)); s.u+=s.dir*s.v*dt*1.6/Math.max(len,.05); if(s.u>1||s.u<0){ s.seg+=s.dir; if(s.seg<0||s.seg>=P.length-1) return false; s.u=s.u>1?0:1; a=P[s.seg]; b=P[s.seg+1]; }
     s.lat=a[0]+(b[0]-a[0])*s.u; s.lon=a[1]+(b[1]-a[1])*s.u; const [x,y]=projT(s.lat,s.lon); if(x<-40||x>W+40||y<-40||y>H+40) return s.t<s.life; const [x2,y2]=projT(b[0],b[1]); const ang=Math.atan2(y2-y,x2-x)+(s.dir<0?Math.PI:0); const sc=Math.max(.5,Math.min(1.3,cam.s/160)); const night=luz(s.lat,s.lon)<.4;
     ctx.save(); ctx.globalAlpha=alpha*.95; ctx.translate(x,y); ctx.rotate(ang); ctx.scale(sc,sc); if(night){ ctx.fillStyle='rgba(255,240,180,.35)'; ctx.beginPath(); ctx.moveTo(4,0); ctx.lineTo(16,-5); ctx.lineTo(16,5); ctx.closePath(); ctx.fill(); } ctx.fillStyle=s.col; ctx.beginPath(); ctx.roundRect?ctx.roundRect(-5,-2.4,10,4.8,1.6):ctx.rect(-5,-2.4,10,4.8); ctx.fill(); ctx.fillStyle='rgba(40,60,80,.8)'; ctx.fillRect(-1.5,-1.8,3.5,3.6); if(night){ ctx.fillStyle='#fff3b0'; ctx.fillRect(4,-2,1.2,1.4); ctx.fillRect(4,.6,1.2,1.4); ctx.fillStyle='#ff4d4d'; ctx.fillRect(-5.2,-2,1,1.4); ctx.fillRect(-5.2,.6,1,1.4); } ctx.restore(); return s.t<s.life; } const [x,y]=projT(s.lat,s.lon); if(x<-80||x>W+80||y<-80||y>H+80) { return s.t<s.life; }
   ctx.save(); ctx.globalAlpha=alpha*.9; const sc=Math.max(1,Math.min(2,cam.s/80)); ctx.translate(x,y); ctx.scale(sc*s.dir,sc);
@@ -426,7 +463,8 @@ function renderTerma(t){ const z=zoneOf(t.z); const tab=(id,sel)=>'<button role=
   const bGM=t.gm?A(t.gm,'Google Maps'+(t.gr?' <span class="star">★ '+esc(t.gr)+(t.gn?' ('+esc(t.gn)+')':'')+'</span>':''),'on'):OFF('Sin ficha en Google Maps');
   const bCom=t.fot.length?A('https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(t.fot[0][0]),t.fot.length+(t.fot.length===1?' foto libre':' fotos libres')+' <span class="star">Commons</span>','on'):OFF('Sin fotos libres');
   const bWeb=t.web?A(t.web,'Sitio del operador','on'):'';
-  const acciones='<div class="acciones">'+bSV+bSat+bGM+bCom+bWeb+'</div>';
+  // Decisión 22-10-2026: solo Google Maps, fotos y sitio del operador (Street View y Satélite retirados; Google Maps ya incluye ambos).
+  const acciones='<div class="acciones">'+bGM+bCom+bWeb+'</div>';
   const gal=t.fot.length?'<div class="gal" id="gal" data-i="0"><img alt="" decoding="async"><div class="galcap"><span id="galtxt"></span><span class="src" id="galsrc"></span></div>'+(t.fot.length>1?'<button class="galb prev" aria-label="Foto anterior">&#8249;</button><button class="galb next" aria-label="Foto siguiente">&#8250;</button><div class="galdots">'+t.fot.map((f,i)=>'<i'+(i?'':' class="on"')+'></i>').join('')+'</div>':'')+'</div>':'';
   side.innerHTML='<h2>'+esc(t.n)+'</h2><p class="hint">'+esc(t.reg)+(t.com?' · '+esc(t.com):'')+' · '+esc(z?z.n:'')+'</p>'+gal+acciones+'<div class="tabs" role="tablist">'+tab('d',true)+tab('i',false)+'</div><div id="tabD">'+desc+'</div><div id="tabI" hidden>'+inv+'</div>';
   if(t.fot.length){ galFotos=t.fot; galShow(0); }
@@ -439,6 +477,29 @@ function galShow(i){ const g=document.getElementById('gal'); if(!g) return; cons
 side.addEventListener('click',e=>{ const b=e.target.closest('.galb'); if(!b) return; const g=document.getElementById('gal'); galShow((+g.dataset.i||0)+(b.classList.contains('next')?1:-1)); });
 addEventListener('keydown',e=>{ if(!document.getElementById('gal')||side.classList.contains('hidden')) return; if(e.key==='ArrowRight') galShow((+document.getElementById('gal').dataset.i||0)+1); if(e.key==='ArrowLeft') galShow((+document.getElementById('gal').dataset.i||0)-1); });
 side.addEventListener('click',e=>{ const a=e.target.closest('a[data-t]'); if(a){ e.preventDefault(); const t=TERMAS.find(x=>x.id===a.dataset.t); if(t) goTerma(t); return; } const b=e.target.closest('button[data-tab]'); if(b){ side.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',x===b)); document.getElementById('tabD').hidden=b.dataset.tab!=='d'; document.getElementById('tabI').hidden=b.dataset.tab!=='i'; } });
+
+/* ---------- Buscador con autocompletado (termas, comunas, ciudades, lagos, volcanes, zonas) ---------- */
+const qIn=document.getElementById('q'), sug=document.getElementById('sug'), buscar=document.getElementById('buscar');
+const nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const INDICE=[];
+TERMAS.forEach(t=>{ if(t.lat!=null) INDICE.push({k:'terma',n:t.n,sub:(t.com&&t.com!=='NA'?t.com+' · ':'')+t.reg,go:()=>goTerma(t)}); });
+[...new Set(TERMAS.filter(t=>t.com&&t.com!=='NA'&&t.lat!=null).map(t=>t.com))].forEach(c=>{ const ts=TERMAS.filter(t=>t.com===c&&t.lat!=null); const la=ts.reduce((a,t)=>a+t.lat,0)/ts.length, lo=ts.reduce((a,t)=>a+t.lon,0)/ts.length; INDICE.push({k:'comuna',n:c,sub:ts.length+(ts.length===1?' terma':' termas'),go:()=>irA(la,lo,Math.max(cam.s,320))}); });
+CIUDADES.forEach(C=>INDICE.push({k:'ciudad',n:C[2],sub:C[3]===1?'capital regional':'localidad',go:()=>irA(C[0],C[1],Math.max(cam.s,420))}));
+LAGOS.forEach(L=>INDICE.push({k:'lago',n:L[4],sub:L[3]==='#efe8d6'?'salar':'lago',go:()=>irA(L[0],L[1],Math.max(cam.s,260))}));
+VOLCANES.forEach(V=>INDICE.push({k:'volcan',n:'Volcán '+V[2],sub:'volcán',go:()=>irA(V[0],V[1],Math.max(cam.s,420))}));
+ZONAS.forEach(z=>INDICE.push({k:'zona',n:z.n,sub:'zona',go:()=>goZona(z)}));
+INDICE.forEach(e=>e.q=nrm(e.n));
+function irA(lat,lon,s){ if(nivel===0){ nivel=1; zonaSel=ZONAS.find(z=>lat>=z.lat[0]&&lat<z.lat[1])||ZONAS[4]; renderCrumbs(); renderZona(zonaSel); } flyTo(lat,lon,s,1300); }
+const ICO={terma:'♨',comuna:'⌂',ciudad:'●',lago:'◦',volcan:'▲',zona:'▭'};
+let sugSel=-1, sugList=[];
+function buscarAhora(){ const q=nrm(qIn.value.trim()); sugSel=-1; if(q.length<2){ sug.innerHTML=''; sugList=[]; return; } const pref=INDICE.filter(e=>e.q.startsWith(q)), cont=INDICE.filter(e=>!e.q.startsWith(q)&&e.q.includes(q)); sugList=pref.concat(cont).slice(0,8);
+  sug.innerHTML=sugList.map((e,i)=>'<button role="option" data-i="'+i+'"><i>'+ICO[e.k]+'</i><span>'+esc(e.n)+'</span><small>'+esc(e.sub)+'</small></button>').join(''); }
+function elegir(i){ const e=sugList[i]; if(!e) return; qIn.value=e.n; sug.innerHTML=''; sugList=[]; qIn.blur(); e.go(); }
+qIn.addEventListener('input',buscarAhora); qIn.addEventListener('focus',()=>{ buscar.classList.add('on'); buscarAhora(); });
+qIn.addEventListener('blur',()=>setTimeout(()=>{ buscar.classList.remove('on'); sug.innerHTML=''; },180));
+qIn.addEventListener('keydown',e=>{ if(e.key==='ArrowDown'){ sugSel=Math.min(sugList.length-1,sugSel+1); } else if(e.key==='ArrowUp'){ sugSel=Math.max(0,sugSel-1); } else if(e.key==='Enter'){ e.preventDefault(); elegir(sugSel<0?0:sugSel); return; } else if(e.key==='Escape'){ qIn.value=''; sug.innerHTML=''; qIn.blur(); return; } else return; e.preventDefault(); sug.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-selected',i===sugSel)); });
+sug.addEventListener('mousedown',e=>{ const b=e.target.closest('button[data-i]'); if(b){ e.preventDefault(); elegir(+b.dataset.i); } });
+addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement!==qIn){ e.preventDefault(); qIn.focus(); } });
 
 /* ---------- Interacción con el mapa ---------- */
 let drag=null;
