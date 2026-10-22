@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: "Thermalia: base de datos y vademécum digital de las termas de Chile"
+message: "Si usa estos datos o este sitio, cite este repositorio."
+type: dataset
+authors:
+  - name: "Núcleo Milenio de Geobiología de Ecosistemas Termales Andinos (MN-Thermalia)"
+version: "0.1.0-prototipo"
+date-released: "2026-10-22"
+license: "CC-BY-4.0"
+repository-code: "https://github.com/fissotta/thermalia"
+keywords: [termas, aguas termales, Chile, geoquímica, microbiología, balneología, turismo, vademécum]

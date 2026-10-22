@@ -1,0 +1,190 @@
+id,nombre,comuna,region,lat,lon,precision,google_maps_url_conocida,consulta
+fumarolas-volcan-tacora,Fumarolas del volcán Tacora,General Lagos,Arica y Parinacota,-17.72056,-69.77278,"aprox (cumbre del volcán, no de las fumarolas)",,Fumarolas del volcán Tacora General Lagos
+termas-de-las-cuevas,Termas de Las Cuevas,Putre,Arica y Parinacota,-18.17,-69.430961,aprox,,Termas de Las Cuevas Putre
+termas-de-jurasi,Termas de Jurasi,Putre,Arica y Parinacota,-18.210327,-69.510705,aprox,,Termas de Jurasi Putre
+termas-de-churiguaya,Termas de Churiguaya,Putre,Arica y Parinacota,-18.357102,-69.179552,aprox,,Termas de Churiguaya Putre
+fumarolas-volcan-guallatiri,Fumarolas del volcán Guallatiri,Putre,Arica y Parinacota,-18.4236,-69.0897,"aprox (cumbre; fumarolas 50 m bajo la cima, flanco O y flanco S-SO)",,Fumarolas del volcán Guallatiri Putre
+termas-de-polloquere,Termas de Polloquere,Putre,Arica y Parinacota,-18.866667,-68.966667,aprox,,Termas de Polloquere Putre
+termas-de-aguas-calientes-general-lagos,Termas de Aguas Calientes (General Lagos),General Lagos,Arica y Parinacota,NA,NA,NA,,Termas de Aguas Calientes (General Lagos) General Lagos
+aguas-calientes-de-tacora,Aguas Calientes de Tacora,General Lagos,Arica y Parinacota,NA,NA,NA,,Aguas Calientes de Tacora General Lagos
+termas-de-colpitas,Termas de Colpitas,Putre,Arica y Parinacota,NA,NA,NA,,Termas de Colpitas Putre
+aguas-termales-de-putre,Aguas termales de Putre,Putre,Arica y Parinacota,NA,NA,NA,,Aguas termales de Putre Putre
+fumarolas-volcan-isluga,Fumarolas del volcán Isluga,Colchane,Tarapacá,-19.15,-68.833,aprox (cráter cumbre),,Fumarolas del volcán Isluga Colchane
+termas-de-enquelga,Termas de Enquelga,Colchane,Tarapacá,-19.23043,-68.793988,aprox,,Termas de Enquelga Colchane
+tuja-quebrada-tuja,Campo termal de Tuja (Quebrada Tuja),Colchane,Tarapacá,-19.37,-69.0,"estimada ±3 km (6 km al NO de Puchuldiza según Wikipedia; 3,5 km al NO de Taipicollo según Montenegro 2008)",,Campo termal de Tuja (Quebrada Tuja) Colchane
+banos-de-puchuldiza,Baños de Puchuldiza,Colchane,Tarapacá,-19.412662,-68.961083,aprox,,Baños de Puchuldiza Colchane
+termas-de-ancuaque,Termas de Ancuaque,Colchane,Tarapacá,-19.525,-68.72194,aprox,,Termas de Ancuaque Colchane
+termas-de-chusmiza,Termas de Chusmiza,Huara,Tarapacá,-19.682353,-69.181838,aprox,,Termas de Chusmiza Huara
+termas-de-lirima,Termas de Lirima,Pica,Tarapacá,-19.8534866,-68.9077946,aprox,,Termas de Lirima Pica
+termas-de-mamina,Termas de Mamiña,Pozo Almonte,Tarapacá,-20.07266,-69.217265,aprox,,Termas de Mamiña Pozo Almonte
+termas-de-macaya,Termas de Macaya,Pozo Almonte,Tarapacá,-20.133913,-69.18157,aprox,,Termas de Macaya Pozo Almonte
+termas-de-pica-cocha-resbaladero,Termas de Pica (Cocha Resbaladero),Pica,Tarapacá,-20.491666,-69.330061,aprox,,Termas de Pica (Cocha Resbaladero) Pica
+fumarolas-volcan-irruputuncu,Fumarolas del volcán Irruputuncu,Pica,Tarapacá,-20.73194,-68.55222,aprox (cráter SO de la cumbre),,Fumarolas del volcán Irruputuncu Pica
+fumarolas-volcan-olca,Fumarolas del volcán Olca (Olca-Paruma),Pica,Tarapacá,-20.939,-68.413,aprox (cumbre de Olca; campo fumarólico elíptico de 150 m en cráter principal),,Fumarolas del volcán Olca (Olca-Paruma) Pica
+pingallure,Manifestaciones termales de Pingallure,Colchane,Tarapacá,NA,NA,NA,,Manifestaciones termales de Pingallure Colchane
+vertientes-termales-licancura,Vertientes termales de Licancura (Pumire-Millacucho / Quebrada Maymaja),NA (límite Tarapacá-Arica y Parinacota),Tarapacá,NA,NA,NA,,Vertientes termales de Licancura (Pumire-Millacucho / Quebrada Maymaja) NA (límite Tarapacá-Arica y Parinacota)
+fumarolas-volcan-aucanquilcha,Fumarolas del volcán Aucanquilcha,Ollagüe,Antofagasta,-21.22083,-68.46861,aprox (cumbre; fumarolas en zona de cumbre y trincheras de la mina de azufre a 5950 m),,Fumarolas del volcán Aucanquilcha Ollagüe
+fumarolas-volcan-ollague,Fumarolas del volcán Ollagüe,Ollagüe,Antofagasta,-21.283,-68.183,"aprox (cumbre; vent en domos de cumbre dentro de escarpe de colapso, lado SE)",,Fumarolas del volcán Ollagüe Ollagüe
+vertientes-termales-cerro-del-azufre,Vertientes termales al pie norte del Cerro del Azufre,Ollagüe,Antofagasta,-21.787,-68.237,aprox (cumbre del volcán; las vertientes están al pie N),,Vertientes termales al pie norte del Cerro del Azufre Ollagüe
+fumarolas-cerro-apacheta-pampa-apacheta,Fumarolas de Cerro Apacheta (Pampa Apacheta),Ollagüe,Antofagasta,-21.833,-68.167,aprox (cumbre del complejo Apacheta-Aguilucho; fumarolas en cumbre y laderas N y E),,Fumarolas de Cerro Apacheta (Pampa Apacheta) Ollagüe
+fumarolas-volcan-san-pedro,Fumarolas del volcán San Pedro,Calama,Antofagasta,-21.8878,-68.3914,aprox (cumbre; fumarolas en cráter de la cima oriental),,Fumarolas del volcán San Pedro Calama
+banos-de-turi,Baños de Turi,Calama,Antofagasta,-22.232364,-68.284296,aprox,,Baños de Turi Calama
+el-tatio,Géiseres de El Tatio,Calama,Antofagasta,-22.333881,-68.012753,exacta,,Géiseres de El Tatio Calama
+manantiales-termales-tocorpuri-la-torta,Manantiales termales y pozas burbujeantes de Tocorpuri (norte de La Torta),Calama,Antofagasta,-22.433,-67.967,aprox (coordenadas del volcán Tocorpuri; manifestaciones a ~5000 m al N del domo La Torta),,Manantiales termales y pozas burbujeantes de Tocorpuri (norte de La Torta) Calama
+fumarolas-volcan-putana,Fumarolas del volcán Putana,San Pedro de Atacama,Antofagasta,-22.5667,-67.8667,"aprox (cumbre; cuatro campos: 2 en cráter NE, 1 en cráter cumbre, 1 fuera del cráter)",,Fumarolas del volcán Putana San Pedro de Atacama
+termas-de-puritama,Termas de Puritama,San Pedro de Atacama,Antofagasta,-22.72083,-68.04472,exacta,,Termas de Puritama San Pedro de Atacama
+hecar,Hécar,San Pedro de Atacama,Antofagasta,-23.27003,-67.70946,aprox,,Hécar San Pedro de Atacama
+fumarolas-volcan-lascar,Fumarolas del volcán Láscar,San Pedro de Atacama,Antofagasta,-23.367,-67.733,aprox (cráter activo central),,Fumarolas del volcán Láscar San Pedro de Atacama
+fumarolas-volcan-socompa,Fumarolas del volcán Socompa,Antofagasta,Antofagasta,-24.3958,-68.2458,aprox (cumbre; sitios fumarólicos a 5750-6050 m),,Fumarolas del volcán Socompa Antofagasta
+fumarolas-volcan-lastarria,Fumarolas del volcán Lastarria,Antofagasta,Antofagasta,-25.167,-68.517,aprox (cumbre; campo principal en ladera NO a 4950-5140 m),,Fumarolas del volcán Lastarria Antofagasta
+fumarolas-cerro-aguilucho,Fumarolas de Cerro Aguilucho,Ollagüe,Antofagasta,NA,NA,NA,,Fumarolas de Cerro Aguilucho Ollagüe
+vertientes-termales-laguna-de-la-azufrera,Vertientes termales de la Laguna de la Azufrera,Antofagasta,Antofagasta,NA,NA,NA,,Vertientes termales de la Laguna de la Azufrera Antofagasta
+ojo-de-zorritas-ojo-del-llullaillaco,Ojo de Zorritas / Ojo del Llullaillaco (aguas termales históricas),Antofagasta,Antofagasta,NA,NA,NA,,Ojo de Zorritas / Ojo del Llullaillaco (aguas termales históricas) Antofagasta
+panteon-de-aliste,Termas Panteón de Aliste,Diego de Almagro,Atacama,-26.230889,-68.973136,aprox,,Termas Panteón de Aliste Diego de Almagro
+termas-de-rio-negro,Termas de Río Negro,Diego de Almagro,Atacama,-26.50839,-68.81936,aprox,,Termas de Río Negro Diego de Almagro
+termas-de-juncalito,Termas de Juncalito,Diego de Almagro,Atacama,-26.586212,-68.815115,aprox,,Termas de Juncalito Diego de Almagro
+termas-de-laguna-verde,Termas de Laguna Verde,Copiapó,Atacama,-26.874705,-68.524788,aprox,,Termas de Laguna Verde Copiapó
+fumarolas-y-laguna-del-crater-ojos-del-salado,Fumarolas y laguna del cráter del Nevado Ojos del Salado,Copiapó,Atacama,-27.10972,-68.54139,aprox (cumbre; fumarolas 200 m bajo la cumbre y en el cráter),,Fumarolas y laguna del cráter del Nevado Ojos del Salado Copiapó
+vertientes-salar-de-piedra-parada,Vertientes del Salar de Piedra Parada,"NA (Diego de Almagro / Copiapó; área 26,3-26,9°S, 68,4-68,9°O)",Atacama,NA,NA,NA,,"Vertientes del Salar de Piedra Parada NA (Diego de Almagro / Copiapó; área 26,3-26,9°S, 68,4-68,9°O)"
+banos-del-toro,Baños del Toro,Vicuña,Coquimbo,-29.833556,-70.022809,aprox,,Baños del Toro Vicuña
+termas-de-socos,Termas de Socos,Ovalle,Coquimbo,-30.733318,-71.493537,aprox,,Termas de Socos Ovalle
+termas-del-gordito,Termas del Gordito,"Monte Patria (D, no verificado)",Coquimbo,-31.037564,-70.344455,aprox,,"Termas del Gordito Monte Patria (D, no verificado)"
+termas-de-jahuel,Termas de Jahuel,Santa María (San Felipe según hotel),Valparaíso,-32.683333,-70.6,aprox,,Termas de Jahuel Santa María (San Felipe según hotel)
+termas-el-corazon,Termas El Corazón,San Esteban (Los Andes),Valparaíso,-32.796559,-70.547838,aprox,,Termas El Corazón San Esteban (Los Andes)
+termas-de-colina-colina,Termas de Colina (comuna de Colina),Colina,Metropolitana,-33.182761,-70.598088,aprox,,Termas de Colina (comuna de Colina) Colina
+banos-de-tupungato,Baños de Tupungato (Tupungatito),San José de Maipo,Metropolitana,-33.370297,-69.911351,aprox,,Baños de Tupungato (Tupungatito) San José de Maipo
+banos-de-apoquindo,Baños de Apoquindo,Las Condes,Metropolitana,-33.40294,-70.52699,aprox,,Baños de Apoquindo Las Condes
+banos-azules,Baños Azules,San José de Maipo,Metropolitana,-33.419613,-69.983804,aprox,,Baños Azules San José de Maipo
+fumarolas-tupungatito,Fumarolas del volcán Tupungatito,San José de Maipo,Metropolitana,-33.425,-69.797,"cumbre del volcán (GVP), ±1-2 km; las fumarolas están en el área cratérica",,Fumarolas del volcán Tupungatito San José de Maipo
+banos-de-salinillas,Baños de Salinillas,San José de Maipo,Metropolitana,-33.499395,-70.09174,aprox,,Baños de Salinillas San José de Maipo
+termas-del-plomo,Termas del Plomo,San José de Maipo,Metropolitana,-33.6174828,-69.9092741,aprox,,Termas del Plomo San José de Maipo
+fumarolas-volcan-san-jose,Fumarolas del volcán San José (cráter central y flanco S),San José de Maipo,Metropolitana,-33.789,-69.895,"cumbre/centro del volcán (GVP/Wikipedia), ±1–3 km",,Fumarolas del volcán San José (cráter central y flanco S) San José de Maipo
+banos-morales,Baños Morales,San José de Maipo,Metropolitana,-33.824115,-70.06005,aprox,,Baños Morales San José de Maipo
+termas-valle-de-colina,"Termas Valle de Colina (Baños Colina, Cajón del Maipo)",San José de Maipo,Metropolitana,-33.852872,-69.982193,aprox,,"Termas Valle de Colina (Baños Colina, Cajón del Maipo) San José de Maipo"
+banos-de-puente-de-tierra,Baños de Puente de Tierra,San José de Maipo,Metropolitana,-34.092979,-70.051511,aprox,,Baños de Puente de Tierra San José de Maipo
+termas-de-cauquenes,Termas de Cauquenes,Machalí,O'Higgins,-34.248317,-70.555429,aprox,,Termas de Cauquenes Machalí
+fumarolas-tinguiririca,Fumarolas y manantiales del volcán Tinguiririca,San Fernando,O'Higgins,-34.814,-70.352,"cumbre del volcán (GVP), ±1-2 km",,Fumarolas y manantiales del volcán Tinguiririca San Fernando
+termas-del-flaco,Termas del Flaco,San Fernando,O'Higgins,-34.957664,-70.434804,aprox,,Termas del Flaco San Fernando
+banos-de-san-pedro,Baños de San Pedro,Romeral,Maule,-35.1367569,-70.47662,aprox,,Baños de San Pedro Romeral
+fumarolas-planchon-peteroa,Fumarolas y lagunas cratéricas del complejo Planchón-Peteroa,Romeral / Curicó (NA),Maule,-35.223,-70.568,"cumbre del complejo (GVP), ±1-2 km",,Fumarolas y lagunas cratéricas del complejo Planchón-Peteroa Romeral / Curicó (NA)
+banos-de-azufre,Baños de Azufre,Curicó,Maule,-35.29161,-70.56163,aprox,,Baños de Azufre Curicó
+termas-el-tigre-potrerillo-pellejo,Termas del Tigre / Potrerillo / Pellejo (Dominio Este),NA,Maule,-35.38681,-70.51943,aprox,,Termas del Tigre / Potrerillo / Pellejo (Dominio Este) Maule
+fumarolas-descabezado-grande,Fumarolas del volcán Descabezado Grande,San Clemente (NA),Maule,-35.58,-70.75,"cumbre del volcán (GVP), ±2 km",,Fumarolas del volcán Descabezado Grande San Clemente (NA)
+termas-de-panimavida,Termas de Panimávida,Colbún,Maule,-35.75,-71.4,aprox,"https://www.google.cl/maps/place/Termas+de+Panim%C3%A1vida/@-35.7622728,-71.4204547,17z/data=!3m1!4b1!4m9!3m8!1s0x966588c34af60cf1:0xd47d7cb07cbeedd7!5m2!4m1!1i2!8m2!3d-35.7622772!4d-71.4178798!16s%2Fg%2F11df7jnytf?entry=ttu",Termas de Panimávida Colbún
+termas-de-quinamavida,Termas de Quinamávida,Colbún,Maule,-35.811656,-71.431462,aprox,,Termas de Quinamávida Colbún
+banos-el-medano,Baños El Médano,San Clemente,Maule,-35.8203366,-70.764073,aprox,,Baños El Médano San Clemente
+banos-el-campanario,Baños El Campanario,San Clemente,Maule,-35.933129,-70.58549,aprox,,Baños El Campanario San Clemente
+termas-del-maule-laguna-del-maule,Termas del Maule (Laguna del Maule),San Clemente,Maule,-36.077667,-70.546413,aprox,,Termas del Maule (Laguna del Maule) San Clemente
+termas-de-catillo,Termas de Catillo,Parral,Maule,-36.293377,-71.650107,aprox,https://maps.app.goo.gl/zp6yct1XY8KfcaDE8,Termas de Catillo Parral
+banos-de-barro-cajon-ibanez,Baños de Barro (Cajón de Ibáñez),Parral,Maule,NA,NA,NA,,Baños de Barro (Cajón de Ibáñez) Parral
+fumarolas-nevados-de-chillan,Fumarolas de Nevados de Chillán (sector termal Volcán Viejo),Pinto,Ñuble,-36.868,-71.378,"cumbre del complejo (GVP), ±2-3 km; las fumarolas están en la falda SW del Volcán Viejo junto a las termas",,Fumarolas de Nevados de Chillán (sector termal Volcán Viejo) Pinto
+termas-valle-hermoso,Termas Valle Hermoso,Pinto,Ñuble,-36.9039832,-71.9685417,aprox,https://goo.gl/maps/Fa9i9ZjpjQpGbqb67,Termas Valle Hermoso Pinto
+termas-de-chillan,Termas de Chillán,Pinto,Ñuble,-36.909133,-71.418509,aprox,https://goo.gl/maps/jNCF3w9heG8ngXZt5,Termas de Chillán Pinto
+aguas-calientes-nevados-de-chillan,Aguas Calientes (Nevados de Chillán),Pinto,Ñuble,NA,NA,NA,,Aguas Calientes (Nevados de Chillán) Pinto
+quebrada-amarilla-nevados-de-chillan,Quebrada Amarilla (Nevados de Chillán),Pinto,Ñuble,NA,NA,NA,,Quebrada Amarilla (Nevados de Chillán) Pinto
+lengua-de-nieve-nevados-de-chillan,Lengua de Nieve (Nevados de Chillán),Pinto,Ñuble,NA,NA,NA,,Lengua de Nieve (Nevados de Chillán) Pinto
+banos-trapa-trapa,Baños Trapa-Trapa,Alto Biobío,Biobío,-37.2167,-71.1667,aprox,,Baños Trapa-Trapa Alto Biobío
+aillin,Aillin,Santa Bárbara,Biobío,-37.54057,-71.37807,aprox,,Aillin Santa Bárbara
+ceniciento,Ceniciento,Santa Bárbara,Biobío,-37.60836,-71.36777,aprox,,Ceniciento Santa Bárbara
+termas-de-nitrao,Termas de Nitrao,Alto Biobío,Biobío,-37.692529,-71.294956,aprox,,Termas de Nitrao Alto Biobío
+termas-de-chancho-co,Termas de Chancho Co,Alto Biobío,Biobío,-37.818919,-71.163611,aprox,,Termas de Chancho Co Alto Biobío
+crater-el-agrio-copahue,Cráter El Agrio y fumarolas de cumbre del volcán Copahue,Alto Biobío,Biobío,-37.856,-71.183,"cumbre del volcán (GVP), ±1 km; cráter fronterizo",,Cráter El Agrio y fumarolas de cumbre del volcán Copahue Alto Biobío
+termas-del-avellano,Termas del Avellano,Alto Biobío,Biobío,-37.990254,-71.529982,aprox,,Termas del Avellano Alto Biobío
+copahue-chileno,Copahue chileno,Alto Biobío,Biobío,NA,NA,NA,,Copahue chileno Alto Biobío
+termas-de-pemehue,Termas de Pemehue,Collipulli,La Araucanía,-38.069608,-71.703425,aprox,,Termas de Pemehue Collipulli
+termas-malleco,Termas Malleco,Curacautín,La Araucanía,-38.23463,-71.72834,exacta,,Termas Malleco Curacautín
+campo-fumarolico-tolhuaca,Campo fumarólico del volcán Tolhuaca,Curacautín,La Araucanía,-38.31,-71.645,"cumbre del volcán (Wikipedia en), ±2-3 km; el campo fumarólico está en el flanco del volcán",,Campo fumarólico del volcán Tolhuaca Curacautín
+fumarolas-crater-navidad-lonquimay,"Fumarolas del cráter Navidad (volcán Lonquimay), 1989–1990",Lonquimay / Curacautín,La Araucanía,-38.377,-71.583,"cumbre/centro del volcán (GVP/Wikipedia), ±1–3 km",,"Fumarolas del cráter Navidad (volcán Lonquimay), 1989–1990 Lonquimay / Curacautín"
+termas-de-manzanar,Termas de Manzanar,Curacautín,La Araucanía,-38.46563,-71.70808,aprox,,Termas de Manzanar Curacautín
+malalcahuello-thermal-resort-spa,Malalcahuello Thermal Resort & Spa,Curacautín,La Araucanía,-38.49007,-71.58489,aprox,,Malalcahuello Thermal Resort & Spa Curacautín
+termas-canon-del-blanco,Termas Cañón del Blanco,Curacautín,La Araucanía,-38.5447673,-72.2410143,aprox,,Termas Cañón del Blanco Curacautín
+banos-del-toro-sierra-nevada,Baños del Toro (Sierra Nevada),Curacautín,La Araucanía,-38.57478,-71.61585,aprox,,Baños del Toro (Sierra Nevada) Curacautín
+aguas-de-la-vaca,Aguas de la Vaca,Curacautín,La Araucanía,-38.57923,-71.62755,aprox,,Aguas de la Vaca Curacautín
+termas-de-alpehue,Termas de Alpehue,Melipeuco,La Araucanía,-38.852339,-71.693132,aprox,,Termas de Alpehue Melipeuco
+termas-de-balboa,Termas de Balboa,Curacautín,La Araucanía,-38.95234,-71.71762,aprox,,Termas de Balboa Curacautín
+termas-de-molulco,Termas de Molulco,Melipeuco,La Araucanía,-38.95704,-71.70915,aprox,,Termas de Molulco Melipeuco
+eco-termas-rio-blanco-cunco,Eco Termas Río Blanco (Cunco),Cunco,La Araucanía,-39.108367,-71.613344,aprox,,Eco Termas Río Blanco (Cunco) Cunco
+termas-de-panqui,Termas de Panqui,Curarrehue,La Araucanía,-39.215783,-71.48887,aprox,,Termas de Panqui Curarrehue
+termas-peumayen,Termas Peumayén,Pucón,La Araucanía,-39.218395,-71.703431,aprox,,Termas Peumayén Pucón
+termas-pucon-indomito,Termas Pucón Indómito,Pucón,La Araucanía,-39.2185117,-71.7035593,aprox,,Termas Pucón Indómito Pucón
+termas-quimey-co,Termas Quimey-Co,Pucón,La Araucanía,-39.218964,-71.696425,aprox,"https://www.google.com/maps/dir//Termas+Quimey-Co+-+km+30+Camino+Puc%C3%B3n+-+Huife+30,+Puc%C3%B3n,+Araucan%C3%ADa/data=!4m7!4m6!1m1!4e2!1m2!1m1!1s0x96139c48d721852b:0x6fb37a0fa4a8955e!3e0",Termas Quimey-Co Pucón
+termas-los-pozones,Termas Los Pozones,Pucón,La Araucanía,-39.225959,-71.645008,aprox,,Termas Los Pozones Pucón
+termas-huife,Termas Huife,Pucón,La Araucanía,-39.227893,-71.657372,aprox,https://maps.app.goo.gl/cVmD4SEv11ymyHRu6,Termas Huife Pucón
+termas-de-liucura,Termas de Liucura,Pucón,La Araucanía,-39.256799,-71.821259,aprox,,Termas de Liucura Pucón
+termas-menetue,Termas Menetúe,Pucón,La Araucanía,-39.330803,-71.719459,aprox,,Termas Menetúe Pucón
+termas-san-luis,Termas San Luis,Pucón,La Araucanía,-39.340013,-71.690846,aprox,,Termas San Luis Pucón
+termas-montevivo,Termas Montevivo,Pucón,La Araucanía,-39.3402502,-71.6933,aprox,https://maps.app.goo.gl/VMp7aare9ccdzcfL9,Termas Montevivo Pucón
+termas-angostura,Termas Angostura,Curarrehue,La Araucanía,-39.352742,-71.639528,aprox,,Termas Angostura Curarrehue
+termas-trancura,Termas Trancura,Curarrehue,La Araucanía,-39.38872,-71.54292,aprox,,Termas Trancura Curarrehue
+crater-villarrica,Cráter del volcán Villarrica (emisiones de gas y vapor),Pucón / Villarrica / Panguipulli,La Araucanía,-39.42,-71.93,"cumbre del volcán (GVP), ±1 km",,Cráter del volcán Villarrica (emisiones de gas y vapor) Pucón / Villarrica / Panguipulli
+termas-de-palguin,Termas de Palguín,Pucón,La Araucanía,-39.421619,-71.784762,aprox,,Termas de Palguín Pucón
+banos-de-coyuco,Baños de Coyuco,Lonquimay,La Araucanía,NA,NA,NA,,Baños de Coyuco Lonquimay
+parque-termal-botanico,Parque Termal Botánico,Pucón,La Araucanía,NA,NA,NA,,Parque Termal Botánico Pucón
+termas-de-pelehue,Termas de Pelehue,Lonquimay,La Araucanía,NA,NA,NA,,Termas de Pelehue Lonquimay
+termas-de-rio-blanco-curacautin,Termas de Río Blanco (Curacautín),Curacautín,La Araucanía,NA,NA,NA,,Termas de Río Blanco (Curacautín) Curacautín
+termas-geometricas,Termas Geométricas,Panguipulli,Los Ríos,-39.50199,-71.87507,aprox,,Termas Geométricas Panguipulli
+termas-cofre,Termas Cofre,Panguipulli,Los Ríos,-39.5065423,-71.8906057,aprox,,Termas Cofre Panguipulli
+termas-el-rincon,Termas El Rincón,Panguipulli,Los Ríos,-39.507271,-71.8546,aprox,https://www.google.cl/maps/dir/''/TERMAS+EL+RINCON+GOOGLE+MAPS/data=!4m5!4m4!1m0!1m2!1m1!1s0x96138ca7d143bf0f:0x93522b99d304e480,Termas El Rincón Panguipulli
+termas-vergara,Termas Vergara,Panguipulli,Los Ríos,-39.509398,-71.894151,aprox,"https://www.google.com/maps/place/Termas+Vergara/@-39.5094314,-71.8941185,15z/data=!4m5!3m4!1s0x0:0xc1c054961fd6a43!8m2!3d-39.5094314!4d-71.8941185",Termas Vergara Panguipulli
+eco-termas-pellaifa,Eco Termas Pellaifa,Panguipulli,Los Ríos,-39.632059,-71.927868,aprox,,Eco Termas Pellaifa Panguipulli
+termas-de-conaripe,Termas de Coñaripe,Panguipulli,Los Ríos,-39.635648,-71.922947,aprox,,Termas de Coñaripe Panguipulli
+termas-rio-hueico,Termas Río Hueico,Panguipulli,Los Ríos,-39.6941765,-71.8958313,aprox,,Termas Río Hueico Panguipulli
+termas-quilalelfu,Termas Quilalelfu,Panguipulli,Los Ríos,-39.73,-71.8537,aprox,,Termas Quilalelfu Panguipulli
+termas-trafipan,Termas Trafipán,Panguipulli,Los Ríos,-39.736253,-71.858977,aprox,,Termas Trafipán Panguipulli
+termas-manquecura,Termas Manquecura,Panguipulli,Los Ríos,-39.739093,-71.84532,aprox,,Termas Manquecura Panguipulli
+termas-rio-liquine,Termas Río Liquiñe,Panguipulli,Los Ríos,-39.740884,-71.855548,aprox,,Termas Río Liquiñe Panguipulli
+termas-rayenco,Termas Rayenco,Panguipulli,Los Ríos,-39.742084,-71.844824,aprox,,Termas Rayenco Panguipulli
+termas-carranco,Termas Carranco,Panguipulli,Los Ríos,-39.742251,-71.849417,aprox,,Termas Carranco Panguipulli
+termas-punulaf,Termas Punulaf,Panguipulli,Los Ríos,-39.742295,-71.843794,aprox,,Termas Punulaf Panguipulli
+termas-hipolito-munoz,Termas Hipólito Muñoz,Panguipulli,Los Ríos,-39.765152,-71.793262,aprox,,Termas Hipólito Muñoz Panguipulli
+cupido,Cupido,Futrono,Los Ríos,-40.14547,-71.92306,aprox,,Cupido Futrono
+termas-de-chihuio,Termas de Chihuío,Futrono,Los Ríos,-40.194302,-71.936025,aprox,,Termas de Chihuío Futrono
+termas-llifen,Termas Llifén,Futrono,Los Ríos,-40.205863,-72.262752,aprox,,Termas Llifén Futrono
+las-sopas-cordon-caulle,Las Sopas (Cordón Caulle),NA,"Los Ríos / Los Lagos (límite, NA)",-40.49452,-72.16802,aprox,,"Las Sopas (Cordón Caulle) Los Ríos / Los Lagos (límite, NA)"
+los-venados-cordon-caulle,Los Venados (Cordón Caulle),NA,"Los Ríos / Los Lagos (límite, NA)",-40.49452,-72.16802,aprox,,"Los Venados (Cordón Caulle) Los Ríos / Los Lagos (límite, NA)"
+termas-cerrillos,Termas Cerrillos,Futrono,Los Ríos,NA,NA,NA,,Termas Cerrillos Futrono
+termas-huilo-huilo,Termas Huilo Huilo,Panguipulli,Los Ríos,NA,NA,NA,,Termas Huilo Huilo Panguipulli
+termas-rio-florin,Termas Río Florín,Futrono,Los Ríos,NA,NA,NA,,Termas Río Florín Futrono
+cordon-caulle-trahuilco-los-banos,Cordón Caulle (Trahuilco / Los Baños),Puyehue / Lago Ranco,Los Lagos,-40.44786,-72.28788,aprox,,Cordón Caulle (Trahuilco / Los Baños) Puyehue / Lago Ranco
+termas-de-puyehue,Termas de Puyehue,Puyehue,Los Lagos,-40.71186,-72.328285,exacta,,Termas de Puyehue Puyehue
+termas-aguas-calientes-puyehue,Termas Aguas Calientes (Puyehue),Puyehue,Los Lagos,-40.735378,-72.307524,aprox,,Termas Aguas Calientes (Puyehue) Puyehue
+termas-el-callao,Termas El Callao,Puerto Varas,Los Lagos,-40.977058,-72.166615,aprox,,Termas El Callao Puerto Varas
+termas-de-ralun,Termas de Ralún,Puerto Varas,Los Lagos,-41.363132,-72.330696,aprox,,Termas de Ralún Puerto Varas
+rollizos,Rollizos,Puerto Varas,Los Lagos,-41.42162,-72.33149,aprox,,Rollizos Puerto Varas
+termas-de-sotomo,Termas de Sotomó,Cochamó,Los Lagos,-41.660597,-72.396681,aprox,,Termas de Sotomó Cochamó
+puelo,Puelo,Cochamó,Los Lagos,-41.67847,-72.33892,aprox,,Puelo Cochamó
+termas-de-rio-blanco-hualaihue,Termas de Río Blanco (Hualaihué),Hualaihué,Los Lagos,-41.93831,-72.30883,aprox,,Termas de Río Blanco (Hualaihué) Hualaihué
+termas-de-pichicolo,Termas de Pichicolo,Hualaihué,Los Lagos,-41.97484,-72.55288,aprox,,Termas de Pichicolo Hualaihué
+termas-de-llancahue,Termas de Llancahué,Hualaihué,Los Lagos,-42.13371,-72.5492,aprox,,Termas de Llancahué Hualaihué
+termas-de-cahuelmo,Termas de Cahuelmó,Hualaihué,Los Lagos,-42.2551,-72.37597,aprox,,Termas de Cahuelmó Hualaihué
+termas-de-porcelana,Termas de Porcelana,Chaitén,Los Lagos,-42.45595,-72.44893,aprox,,Termas de Porcelana Chaitén
+termas-de-chilco,Termas de Chilco,Chaitén,Los Lagos,-42.51577,-72.61465,aprox,,Termas de Chilco Chaitén
+termas-el-penon,Termas El Peñón,Chaitén,Los Lagos,-42.60678,-72.5751,aprox,,Termas El Peñón Chaitén
+termas-lago-negro,Termas Lago Negro,Chaitén,Los Lagos,-42.73205,-72.59502,aprox,,Termas Lago Negro Chaitén
+termas-de-michinmahuida,Termas de Michinmahuida,Chaitén,Los Lagos,-42.96453,-72.38681,aprox,,Termas de Michinmahuida Chaitén
+termas-el-amarillo,Termas El Amarillo,Chaitén,Los Lagos,-42.97579,-72.40852,aprox,,Termas El Amarillo Chaitén
+fuente-mineral-yelcho,Fuente mineral Yelcho,Chaitén,Los Lagos,-43.26512,-72.41944,aprox,,Fuente mineral Yelcho Chaitén
+termas-de-moraga,Termas de Moraga,Chaitén,Los Lagos,-43.34021,-72.40368,aprox,,Termas de Moraga Chaitén
+termas-santa-lucia,Termas Santa Lucía,Chaitén,Los Lagos,-43.41983,-72.42844,aprox,,Termas Santa Lucía Chaitén
+fumarolas-volcan-yanteles,"Fumarolas del volcán Yanteles (dos áreas en la cresta, 1993)",Chaitén / Palena (NA),Los Lagos,-43.469,-72.782,"cumbre/centro del volcán (GVP/Wikipedia), ±1–3 km",,"Fumarolas del volcán Yanteles (dos áreas en la cresta, 1993) Chaitén / Palena (NA)"
+termas-de-pangal,Termas de Pangal,Puyehue,Los Lagos,NA,NA,NA,,Termas de Pangal Puyehue
+termas-de-rupanco,Termas de Rupanco,Puyehue,Los Lagos,NA,NA,NA,,Termas de Rupanco Puyehue
+termas-del-sol,Termas del Sol,Cochamó,Los Lagos,NA,NA,NA,https://maps.app.goo.gl/uJUbHhQybs6bDpXK7,Termas del Sol Cochamó
+termas-puerto-bonito,Termas Puerto Bonito,Cisnes,Aysén,-43.95382,-72.72929,aprox,,Termas Puerto Bonito Cisnes
+termas-naturales-el-sauce,Termas Naturales El Sauce,Cisnes,Aysén,-44.0292417,-72.5332276,aprox,,Termas Naturales El Sauce Cisnes
+termas-aeropuerto-puyuhuapi,Termas Aeropuerto (Puyuhuapi),Cisnes,Aysén,-44.29161,-72.61848,aprox,,Termas Aeropuerto (Puyuhuapi) Cisnes
+termas-ventisquero-puyuhuapi,Termas Ventisquero Puyuhuapi,Cisnes,Aysén,-44.3716469,-72.5762309,aprox,,Termas Ventisquero Puyuhuapi Cisnes
+termas-de-puyuhuapi,Termas de Puyuhuapi,Cisnes,Aysén,-44.413727,-72.645821,exacta,,Termas de Puyuhuapi Cisnes
+termas-de-queulat,Termas de Queulat,Cisnes,Aysén,-44.51601,-72.54883,aprox,,Termas de Queulat Cisnes
+termas-ensenada-perez,Termas Ensenada Pérez,Aysén,Aysén,-45.2691281,-73.2550395,aprox,,Termas Ensenada Pérez Aysén
+termas-de-chilconal,Termas de Chilconal,Aysén,Aysén,-45.4035437,-72.6864154,aprox,,Termas de Chilconal Aysén
+termas-quitralco,Termas Quitralco,Aysén,Aysén,-45.667657,-73.036851,aprox,,Termas Quitralco Aysén
+termas-de-huemules,Termas de Huemules,Aysén,Aysén,-45.87879,-73.29113,aprox,,Termas de Huemules Aysén
+fumarolas-y-manantiales-calientes-volcan-hudson,Fumarolas y manantiales calientes del volcán Hudson,Río Ibáñez / Aysén,Aysén,-45.9,-72.97,"cumbre/centro del volcán (GVP/Wikipedia), ±1–3 km",,Fumarolas y manantiales calientes del volcán Hudson Río Ibáñez / Aysén
+termas-de-cupquelan,Termas de Cupquelán,Aysén,Aysén,-45.99537,-73.39227,aprox,,Termas de Cupquelán Aysén
+termas-de-huina,Termas de Huiña,NA,Aysén,-46.31742,-72.81328,aprox,,Termas de Huiña Aysén
+termas-el-engano,Termas El Engaño,NA,Aysén,-46.4542,-72.7888,aprox,,Termas El Engaño Aysén
+termas-cristal,Termas Cristal,NA,Aysén,-46.56873,-72.40976,aprox,,Termas Cristal Aysén
+termas-el-ganote,Termas El Gañote,Cisnes,Aysén,NA,NA,NA,,Termas El Gañote Cisnes
+fumarolas-volcan-lautaro,Fumarolas del volcán Lautaro (Campo de Hielo Sur),"Natales / O'Higgins (Aysén) (límite, NA)",Magallanes,-49.019,-73.504,"cumbre/centro del volcán (GVP/Wikipedia), ±1–3 km",,"Fumarolas del volcán Lautaro (Campo de Hielo Sur) Natales / O'Higgins (Aysén) (límite, NA)"
+termas-de-skyring,Termas de Skyring,Río Verde,Magallanes,-52.5833,-72.0,aprox,,Termas de Skyring Río Verde
