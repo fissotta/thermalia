@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-22
+- Mapa vivo: animaciones siempre activas (se quitó el botón "Modo sereno"); fauna y gente nacen dentro de lo que se ve en pantalla; autos (pocos, con luces de noche) circulando por las rutas; clima real por zona desde Open-Meteo (temperatura, nubes, lluvia/nieve, viento; cada 30 min, con respaldo simulado) y sol suave cuando está despejado.
 - Mapa vivo: capas combinables (botones, varias a la vez) con símbolo propio por capa y color por valor; nuevas capas Barros y Seguridad; galería de fotos en la ficha (Wikimedia Commons, con autor y licencia, flechas y puntos); botones de la ficha en naranjo solo cuando hay información verificada (Street View comprobado, ficha Google Maps con rating, fotos libres, web).
 - `data/streetview.csv`: disponibilidad de Street View/fotoesferas en el punto (≤50 m) o cerca (≤300 m) para las 243 termas con coordenadas (77 en el punto, 23 cerca, 143 sin cobertura), con id de panorama y enlace directo.
 - `data/fotos_commons.json`: 60 termas con fotos libres de Commons (curado a mano; se distingue foto de la terma vs. entorno < 1 km).

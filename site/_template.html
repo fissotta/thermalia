@@ -98,7 +98,6 @@ ul.list{margin:0;padding-left:18px}
       <button class="btn" id="bNoche" aria-pressed="false" title="Ver de noche">Ver de noche</button>
       <button class="btn" id="bSon" aria-pressed="true" title="Ambiente: agua, viento, aves">Sonido</button>
       <button class="btn" id="bMus" aria-pressed="true" title="Música suave generada: pentatónica andina, quena, gotas de agua">Música</button>
-      <button class="btn" id="bSereno" aria-pressed="false" title="Sin animaciones">Modo sereno</button>
     </div>
   </div>
   <div class="ui" id="status"></div>
@@ -172,22 +171,37 @@ function estacion(){ const m=new Date().getMonth(); return (m>=11||m<=1)?'verano
 /* Clima simulado por zona y estación (en producción: Open-Meteo por centro de zona, cada 30 min). */
 const climaBase={1:{s:.8,r:.1},2:{s:.95,r:.02},3:{s:.85,r:.08},4:{s:.6,r:.25},5:{s:.45,r:.4},6:{s:.3,r:.55},7:{s:.3,r:.55},8:{s:.35,r:.45}};
 const seed=Math.floor(Date.now()/18e5); function rnd(i){ const x=Math.sin(i*9301+seed*49297)*233280; return x-Math.floor(x); }
-const clima={}; ZONAS.forEach(z=>{ const b=climaBase[z.id]; const est=estacion(); const wet=(est==='invierno'?1.4:est==='verano'?.6:1); const r=rnd(z.id); const lluvia=r<b.r*wet; const nubes=lluvia?.9:Math.min(1,(1-b.s)+rnd(z.id+10)*.5); const nieve=lluvia&&(z.id===4||z.id===5||z.id===8)&&est==='invierno'; const viento=.3+rnd(z.id+20)*(z.id>=7?.7:.4); const temp=Math.round((z.id<=2?(est==='verano'?22:10):z.id<=4?(est==='verano'?26:12):z.id<=6?(est==='verano'?19:8):(est==='verano'?14:4))+(rnd(z.id+30)-.5)*6); clima[z.id]={lluvia,nubes,nieve,viento,temp,txt:nieve?'nieve':lluvia?'lluvia':nubes>.6?'nublado':nubes>.3?'parcial':'despejado'}; });
+const clima={}; let climaReal=false;
+/* Clima real: Open-Meteo (gratis, sin clave) para el centro de cada zona, cada 30 min; si falla, queda el simulado. */
+const WMO={0:'despejado',1:'mayormente despejado',2:'parcial',3:'nublado',45:'niebla',48:'niebla',51:'llovizna',53:'llovizna',55:'llovizna',56:'llovizna helada',57:'llovizna helada',61:'lluvia',63:'lluvia',65:'lluvia intensa',66:'lluvia helada',67:'lluvia helada',71:'nieve',73:'nieve',75:'nieve intensa',77:'nieve',80:'chubascos',81:'chubascos',82:'chubascos fuertes',85:'nieve',86:'nieve',95:'tormenta',96:'tormenta con granizo',99:'tormenta con granizo'};
+async function cargarClima(){ try{ const la=ZONAS.map(z=>z.c[0]).join(','), lo=ZONAS.map(z=>z.c[1]).join(',');
+  const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+la+'&longitude='+lo+'&current=temperature_2m,precipitation,rain,snowfall,cloud_cover,wind_speed_10m,weather_code&timezone=America%2FSantiago'); if(!r.ok) throw 0; const d=await r.json(); const arr=Array.isArray(d)?d:[d];
+  arr.forEach((o,i)=>{ const z=ZONAS[i]; if(!z||!o.current) return; const c=o.current; const code=c.weather_code; const nieve=(c.snowfall||0)>0||[71,73,75,77,85,86].includes(code); const lluvia=nieve||(c.precipitation||0)>0||[51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code);
+    clima[z.id]={lluvia,nieve,nubes:Math.max(lluvia?.85:0,(c.cloud_cover||0)/100),viento:Math.min(1,(c.wind_speed_10m||0)/45),temp:Math.round(c.temperature_2m),txt:WMO[code]||(lluvia?'lluvia':'parcial'),real:true}; });
+  climaReal=true; if(zonaSel&&nivel===1) renderZona(zonaSel); }catch(e){ climaReal=false; } }
+cargarClima(); setInterval(cargarClima,30*60*1000);
+ZONAS.forEach(z=>{ const b=climaBase[z.id]; const est=estacion(); const wet=(est==='invierno'?1.4:est==='verano'?.6:1); const r=rnd(z.id); const lluvia=r<b.r*wet; const nubes=lluvia?.9:Math.min(1,(1-b.s)+rnd(z.id+10)*.5); const nieve=lluvia&&(z.id===4||z.id===5||z.id===8)&&est==='invierno'; const viento=.3+rnd(z.id+20)*(z.id>=7?.7:.4); const temp=Math.round((z.id<=2?(est==='verano'?22:10):z.id<=4?(est==='verano'?26:12):z.id<=6?(est==='verano'?19:8):(est==='verano'?14:4))+(rnd(z.id+30)-.5)*6); clima[z.id]={lluvia,nubes,nieve,viento,temp,txt:nieve?'nieve':lluvia?'lluvia':nubes>.6?'nublado':nubes>.3?'parcial':'despejado'}; });
 
 /* ---------- Sprites (dibujo propio, formas planas) ---------- */
-const sprites=[]; let sereno=reduced;
+const sprites=[]; window.__sprites=sprites; let sereno=false; // animaciones siempre activas (decisión 22-10-2026)
 const MAX=56;
 function spawn(z){ if(sereno||sprites.length>=MAX||!zonaSel) return; const night=luz(z.c[0],z.c[1])<.35; const b=z.bioma; const pool=[];
   if(night){ pool.push('zorro','buho','luciernaga'); if(b==='valdiviano'||b==='araucaria') pool.push('monito'); if(b==='altiplano'||b==='puna') pool.push('vizcacha'); if(b!=='estepa') pool.push('murcielago'); }
   else { pool.push('ave'); if(b==='altiplano'||b==='puna'){ pool.push('vicuna','flamenco','llamas','condor'); } if(b==='semiarido'||b==='mediterraneo'){ pool.push('condor','mariposa','abeja','huaso'); } if(b==='araucaria'){ pool.push('pudu','carpintero','mariposa','pewenche'); } if(b==='valdiviano'){ pool.push('chucao','cisne','mariposa','lanchero'); } if(b==='patagonia'||b==='estepa'){ pool.push('ovejas','nandu','condor','gaucho'); if(b==='patagonia') pool.push('huemul'); } }
+  // autos: pocos, solo con zoom suficiente para ver las rutas; de noche llevan luces
+  if(cam.s>80&&sprites.filter(x=>x.k==='auto').length<5&&Math.random()<.35){ const cand=RUTAS.map((R,ri)=>[ri,R[1].map((p,i)=>i).slice(0,-1).filter(i=>{ const a=R[1][i],b=R[1][i+1]; const m=(a[0]+b[0])/2; return m>=z.lat[0]-.6&&m<z.lat[1]+.6; })]).filter(c=>c[1].length); if(cand.length){ const c=cand[Math.floor(Math.random()*cand.length)]; const seg=c[1][Math.floor(Math.random()*c[1].length)]; sprites.push({k:'auto',ri:c[0],seg,u:Math.random(),dir:Math.random()<.5?1:-1,t:0,life:20000+Math.random()*20000,col:['#e0e0e0','#c62828','#2d6cdf','#f2c94c','#555'][Math.floor(Math.random()*5)],v:.00004+Math.random()*.00003,lat:0,lon:0,ph:0}); return; } }
   const k=pool[Math.floor(Math.random()*pool.length)];
-  const [lat0,lat1]=z.lat; const lat=lat0+Math.random()*(lat1-lat0); const lon=z.c[1]+(Math.random()-.5)*2.2;
+  // nacen dentro de lo que se ve en pantalla (y dentro de la zona), nunca sobre el mar
+  const [laT,loL]=unproj(0,0), [laB,loR]=unproj(W,H); let lat,lon,ok=false; for(let i=0;i<8&&!ok;i++){ lat=Math.max(z.lat[0],laB)+Math.random()*(Math.min(z.lat[1],laT)-Math.max(z.lat[0],laB)); lon=Math.max(loL,z.c[1]-2.2)+Math.random()*(Math.min(loR,z.c[1]+1.6)-Math.max(loL,z.c[1]-2.2)); ok=hAt(lat,lon)>1; } if(!ok) return;
   const base={k,lat,lon,t:0,life:14000+Math.random()*16000,dir:Math.random()<.5?1:-1,ph:Math.random()*6.28,v:.00002+Math.random()*.00004};
   if(k==='ovejas'||k==='llamas'||k==='vicuna') base.n=4+Math.floor(Math.random()*6);
   sprites.push(base);
 }
-function drawSprite(s,now,dt){ s.t+=dt; const alpha=Math.min(1,s.t/1500,(s.life-s.t)/1500); if(alpha<=0) return false; const [x,y]=projT(s.lat,s.lon); if(x<-80||x>W+80||y<-80||y>H+80) { return s.t<s.life; }
-  ctx.save(); ctx.globalAlpha=alpha*.9; const sc=Math.max(.6,Math.min(1.6,cam.s/90)); ctx.translate(x,y); ctx.scale(sc*s.dir,sc);
+function drawSprite(s,now,dt){ s.t+=dt; const alpha=Math.min(1,s.t/1500,(s.life-s.t)/1500); if(alpha<=0) return false;
+  if(s.k==='auto'){ if(cam.s<=80) return false; const P=RUTAS[s.ri][1]; let a=P[s.seg],b=P[s.seg+1]; const len=Math.hypot(b[0]-a[0],(b[1]-a[1])*Math.cos(a[0]*Math.PI/180)); s.u+=s.dir*s.v*dt*30/Math.max(len,.05); if(s.u>1||s.u<0){ s.seg+=s.dir; if(s.seg<0||s.seg>=P.length-1) return false; s.u=s.u>1?0:1; a=P[s.seg]; b=P[s.seg+1]; }
+    s.lat=a[0]+(b[0]-a[0])*s.u; s.lon=a[1]+(b[1]-a[1])*s.u; const [x,y]=projT(s.lat,s.lon); if(x<-40||x>W+40||y<-40||y>H+40) return s.t<s.life; const [x2,y2]=projT(b[0],b[1]); const ang=Math.atan2(y2-y,x2-x)+(s.dir<0?Math.PI:0); const sc=Math.max(.5,Math.min(1.3,cam.s/160)); const night=luz(s.lat,s.lon)<.4;
+    ctx.save(); ctx.globalAlpha=alpha*.95; ctx.translate(x,y); ctx.rotate(ang); ctx.scale(sc,sc); if(night){ ctx.fillStyle='rgba(255,240,180,.35)'; ctx.beginPath(); ctx.moveTo(4,0); ctx.lineTo(16,-5); ctx.lineTo(16,5); ctx.closePath(); ctx.fill(); } ctx.fillStyle=s.col; ctx.beginPath(); ctx.roundRect?ctx.roundRect(-5,-2.4,10,4.8,1.6):ctx.rect(-5,-2.4,10,4.8); ctx.fill(); ctx.fillStyle='rgba(40,60,80,.8)'; ctx.fillRect(-1.5,-1.8,3.5,3.6); if(night){ ctx.fillStyle='#fff3b0'; ctx.fillRect(4,-2,1.2,1.4); ctx.fillRect(4,.6,1.2,1.4); ctx.fillStyle='#ff4d4d'; ctx.fillRect(-5.2,-2,1,1.4); ctx.fillRect(-5.2,.6,1,1.4); } ctx.restore(); return s.t<s.life; } const [x,y]=projT(s.lat,s.lon); if(x<-80||x>W+80||y<-80||y>H+80) { return s.t<s.life; }
+  ctx.save(); ctx.globalAlpha=alpha*.9; const sc=Math.max(1,Math.min(2,cam.s/80)); ctx.translate(x,y); ctx.scale(sc*s.dir,sc);
   const k=s.k; const w=Math.sin(now/120+s.ph);
   if(k==='ave'||k==='condor'||k==='carpintero'||k==='chucao'){ s.lon+=s.v*dt*s.dir*(k==='condor'?.6:1.4); if(k==='condor'){ s.lat+=Math.cos(now/2500+s.ph)*.00003; }
     ctx.strokeStyle=k==='carpintero'?'#2b2b2b':k==='chucao'?'#7a4a2a':'#1f2a33'; ctx.lineWidth=k==='condor'?2.2:1.4; ctx.beginPath(); const f=w*5; ctx.moveTo(-9,f); ctx.quadraticCurveTo(-3,-2,0,0); ctx.quadraticCurveTo(3,-2,9,f); ctx.stroke(); if(k==='carpintero'){ctx.fillStyle='#c62828'; ctx.beginPath(); ctx.arc(0,-1,1.6,0,6.28); ctx.fill();} }
@@ -306,6 +320,7 @@ function drawClima(now,dt,l){ if(sereno) return; nubes.forEach(c=>{ const z=ZONA
    if(cl.lluvia&&cam.s>40&&Math.random()<.5){ gotas.push({x:x+(Math.random()-.5)*r*2,y:y+r*.4,t:0,n:cl.nieve}); } });
   for(let i=gotas.length-1;i>=0;i--){ const g=gotas[i]; g.t+=dt; if(g.t>900){gotas.splice(i,1);continue;} const yy=g.y+g.t*(g.n?.03:.12); ctx.strokeStyle=g.n?'rgba(255,255,255,.8)':'rgba(170,210,240,.6)'; ctx.lineWidth=1; ctx.beginPath(); if(g.n){ ctx.arc(g.x+Math.sin(g.t/150)*3,yy,1.2,0,6.28); ctx.stroke(); } else { ctx.moveTo(g.x,yy); ctx.lineTo(g.x-1,yy+6); ctx.stroke(); } }
 }
+function drawSol(l){ const z=zonaSel; if(!z||nivel===0) return; const cl=clima[z.id]; if(!cl||cl.nubes>.45||l<.35) return; const x=W-70, y=72; const g=ctx.createRadialGradient(x,y,4,x,y,110); g.addColorStop(0,'rgba(255,236,170,'+(.55*l)+')'); g.addColorStop(.25,'rgba(255,200,110,'+(.18*l)+')'); g.addColorStop(1,'rgba(255,180,90,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,110,0,6.28); ctx.fill(); ctx.fillStyle='rgba(255,246,210,'+(.85*l)+')'; ctx.beginPath(); ctx.arc(x,y,13,0,6.28); ctx.fill(); }
 function drawLuz(){ // sombra nocturna por latitud (amanece/oscurece según hora solar real)
   const steps=22; const lat0=-17.5,lat1=-56; for(let i=0;i<steps;i++){ const la=lat0+(lat1-lat0)*(i/steps), lb=lat0+(lat1-lat0)*((i+1)/steps); const l=luz((la+lb)/2,-71); const y0=proj(la,-71)[1], y1=proj(lb,-71)[1]; const a=(1-l)*.6; ctx.fillStyle='rgba(6,12,28,'+a+')'; ctx.fillRect(0,Math.min(y0,y1)-1,W,Math.abs(y1-y0)+2); if(l>0&&l<.55){ ctx.fillStyle='rgba(255,140,80,'+(.12*(1-Math.abs(l-.3)/.3))+')'; ctx.fillRect(0,Math.min(y0,y1)-1,W,Math.abs(y1-y0)+2);} }
 }
@@ -376,7 +391,7 @@ function drawTermas(now,l){ const list=visibles(); const act=CAPAS.filter(c=>cap
 /* ---------- Paneles ---------- */
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function renderZona(z){ const list=visibles().filter(t=>t.z===z.id); const doc=list.filter(t=>t.capa==='documentada').length; const cl=clima[z.id]; const l=luz(z.c[0],z.c[1]);
-  side.innerHTML='<h2>'+esc(z.n)+'</h2><p>'+esc(z.txt)+'</p><div class="kv"><div><b>Sitios termales</b>'+list.length+' ('+doc+' documentados)</div><div><b>Pueblos</b>'+esc(z.pueblo)+'</div><div><b>Clima ahora (simulado)</b>'+cl.temp+' °C · '+cl.txt+'</div><div><b>Luz</b>'+(l>.6?'día':l>.2?'amanecer / atardecer':'noche')+'</div></div><h3>Explora</h3><ul class="list">'+list.filter(t=>t.capa==='documentada').sort((a,b)=>(b.nest+b.ntes)-(a.nest+a.ntes)).slice(0,8).map(t=>'<li><a href="#" data-t="'+t.id+'">'+esc(t.n)+'</a>'+(t.tm!=null?' · '+t.tm+' °C':'')+'</li>').join('')+'</ul><p class="hint">Pincha un punto del mapa para abrir su ficha. El relieve es un modelo estilizado y exagerado a partir de la geografía real (cordillera, altiplano, costa, volcanes, hielos); en producción se usa un modelo de elevación real en 3D. El clima es simulado; en producción viene de Open-Meteo.</p>';
+  side.innerHTML='<h2>'+esc(z.n)+'</h2><p>'+esc(z.txt)+'</p><div class="kv"><div><b>Sitios termales</b>'+list.length+' ('+doc+' documentados)</div><div><b>Pueblos</b>'+esc(z.pueblo)+'</div><div><b>Clima ahora'+(cl.real?' (real, Open-Meteo)':' (simulado)')+'</b>'+cl.temp+' °C · '+cl.txt+'</div><div><b>Luz</b>'+(l>.6?'día':l>.2?'amanecer / atardecer':'noche')+'</div></div><h3>Explora</h3><ul class="list">'+list.filter(t=>t.capa==='documentada').sort((a,b)=>(b.nest+b.ntes)-(a.nest+a.ntes)).slice(0,8).map(t=>'<li><a href="#" data-t="'+t.id+'">'+esc(t.n)+'</a>'+(t.tm!=null?' · '+t.tm+' °C':'')+'</li>').join('')+'</ul><p class="hint">Pincha un punto del mapa para abrir su ficha. El relieve es un modelo estilizado y exagerado a partir de la geografía real (cordillera, altiplano, costa, volcanes, hielos); en producción se usa un modelo de elevación real en 3D. El clima viene de Open-Meteo (si no hay conexión se simula por estación).</p>';
   side.classList.remove('hidden'); }
 function renderTerma(t){ const z=zoneOf(t.z); const tab=(id,sel)=>'<button role="tab" aria-selected="'+sel+'" data-tab="'+id+'">'+(id==='d'?'Descubre':'Investiga')+'</button>';
   const desc='<div class="kv"><div><b>Temperatura</b>'+(t.tm!=null?'<span class="tag m">M</span> '+esc(t.tms):t.td!=null?'<span class="tag d">D</span> '+esc(t.tds):'sin dato')+'</div><div><b>Agua</b>'+(t.q?esc(t.q):'sin análisis')+'</div><div><b>Origen</b>'+(t.orig?esc(t.orig):'sin dato')+'</div><div><b>Qué hay</b>'+(t.infra.length?esc(t.infra.join(', ')):'sin información')+(t.cat?' · '+esc(t.cat):'')+'</div><div><b>Pueblo originario</b>'+(t.pueblo?esc(t.pueblo):'sin dato')+'</div><div><b>Barros</b>'+(t.barros?esc(t.barros):'ninguno registrado')+'</div></div>'+(t.prop.length?'<h3>Propiedades que se le atribuyen <span class="tag d">lo dice el operador</span></h3><p>'+esc(t.prop.join(' · '))+'</p>':'')+'<p class="hint">Altitud: '+(t.alt!=null?t.alt+' m':'sin dato')+' · Coordenada: '+esc(t.prec||'')+' · Estado: '+esc(t.est||'desconocido')+'</p>';
@@ -457,7 +472,7 @@ function programar(){ if(!mus) return; const l=zonaSel?luz(zonaSel.c[0],zonaSel.
 document.getElementById('bMus').addEventListener('click',e=>{ mus=!mus; e.currentTarget.setAttribute('aria-pressed',mus); if(mus){ if(!AC) startAudio(); if(!M.out) startMusic(); else { M.out.gain.setTargetAtTime(.5,AC.currentTime,1); programar(); } AC.resume(); if(!son) nodes.master.gain.setTargetAtTime(0,AC.currentTime,.1); } else { clearTimeout(musTimer); if(M.out) M.out.gain.setTargetAtTime(0,AC.currentTime,1.2); if(!son&&AC) setTimeout(()=>{ if(!son&&!mus) AC.suspend(); },1800); } });
 document.getElementById('bDia').addEventListener('click',e=>{ modoLuz=modoLuz==='dia'?'real':'dia'; e.currentTarget.setAttribute('aria-pressed',modoLuz==='dia'); document.getElementById('bNoche').setAttribute('aria-pressed','false'); });
 document.getElementById('bNoche').addEventListener('click',e=>{ modoLuz=modoLuz==='noche'?'real':'noche'; e.currentTarget.setAttribute('aria-pressed',modoLuz==='noche'); document.getElementById('bDia').setAttribute('aria-pressed','false'); });
-document.getElementById('bSereno').addEventListener('click',e=>{ sereno=!sereno; e.currentTarget.setAttribute('aria-pressed',sereno); if(sereno) sprites.length=0; });
+
 
 /* ---------- Bucle ---------- */
 const status=document.getElementById('status');
@@ -467,10 +482,10 @@ function frame(now){ const dt=Math.min(50,now-last); last=now; stepCam(now);
   // cielo/mar
   const sky=ctx.createLinearGradient(0,0,0,H); const d=lz; sky.addColorStop(0,'rgb('+Math.round(8+40*d)+','+Math.round(20+70*d)+','+Math.round(40+90*d)+')'); sky.addColorStop(1,'rgb('+Math.round(10+30*d)+','+Math.round(28+60*d)+','+Math.round(50+80*d)+')'); ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
   drawChile(lz); drawZonas(lz); drawTermas(now,lz);
-  if(nivel>0){ spawnT+=dt; if(spawnT>(nivel===2?2600:1500)){ spawnT=0; spawn(zonaSel); } for(let i=sprites.length-1;i>=0;i--){ if(!drawSprite(sprites[i],now,dt)) sprites.splice(i,1); } }
-  drawClima(now,dt,lz); drawLuz();
+  if(nivel>0){ spawnT+=dt; if(spawnT>(nivel===2?1800:900)){ spawnT=0; spawn(zonaSel); } if(sprites.length<6&&zonaSel){ for(let i=0;i<4;i++) spawn(zonaSel); } for(let i=sprites.length-1;i>=0;i--){ if(!drawSprite(sprites[i],now,dt)) sprites.splice(i,1); } }
+  drawClima(now,dt,lz); drawSol(lz); drawLuz();
   stepAudio(now);
-  statusT+=dt; if(statusT>1000){ statusT=0; const h=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',timeZone:'America/Santiago'}); const z=zonaSel; status.innerHTML=(audioListo||(!son&&!mus)?'':'<b>Toca el mapa para activar sonido y música.</b><br>')+'<b>'+h+'</b> hora de Chile · luz '+(modoLuz==='real'?'real':modoLuz)+' · '+estacion()+(z?' · <b>'+esc(z.n)+'</b>: '+clima[z.id].temp+' °C, '+clima[z.id].txt+' (simulado)':' · '+visibles().length+' sitios termales en el mapa'); }
+  statusT+=dt; if(statusT>1000){ statusT=0; const h=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',timeZone:'America/Santiago'}); const z=zonaSel; status.innerHTML=(audioListo||(!son&&!mus)?'':'<b>Toca el mapa para activar sonido y música.</b><br>')+'<b>'+h+'</b> hora de Chile · luz '+(modoLuz==='real'?'real':modoLuz)+' · '+estacion()+(z?' · <b>'+esc(z.n)+'</b>: '+clima[z.id].temp+' °C, '+clima[z.id].txt+(clima[z.id].real?' (real)':' (simulado)'):' · '+visibles().length+' sitios termales en el mapa'); }
   requestAnimationFrame(frame); }
 goChile(); cam.lat=-37.2; cam.lon=-70.8; cam.s=fitChile().s; cam.target=null; renderCrumbs();
 status.textContent='Cargando…'; requestAnimationFrame(frame);
