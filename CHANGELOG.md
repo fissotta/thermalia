@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-22
+- Imagen base cambiada a Sentinel-2 cloudless (EOX, CC BY 4.0): mosaico uniforme sin nubes ni parches de distintas fechas al hacer zoom (la imagen de Esri mostraba retazos con luz y color distintos sobre los lagos).
 - Ficha: se retiran los botones Street View y Satélite (quedan Google Maps, fotos libres y sitio del operador); los datos de Street View siguen en `data/streetview.csv` para uso futuro.
 - Mapa vivo: buscador con autocompletado (termas, comunas, ciudades, lagos, salares, volcanes y zonas; tecla "/" para enfocar) en una barra translúcida arriba a la derecha que se vuelve opaca al usarla; autos ~20 veces más lentos; aviones con estela, avionetas, barcos en el mar (con estela y luz de noche), botes en lagos y kayaks en ríos.
 - Mapa vivo: superficie nueva con teselas reales (imagen satelital Esri World Imagery por defecto; botón "Relieve" para mapa físico/sombreado Esri), proyección Web Mercator exacta (las termas, ciudades y volcanes caen donde corresponde), carga progresiva con teselas madre mientras llegan las finas, atribución visible. Se retiran el relieve procedural, los lagos elípticos y los ríos esquemáticos (quedan como etiquetas con zoom); el ciclo día/noche, el clima, la fauna, la gente y los autos siguen sobre la imagen.

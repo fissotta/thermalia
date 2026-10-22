@@ -126,7 +126,7 @@ ul.list{margin:0;padding-left:18px}
     <div class="hint">Cada capa tiene su propio símbolo; el color indica el valor. Borde continuo = dato medido · discontinuo = declarado.</div>
   </div>
   <aside class="ui hidden" id="side" aria-live="polite"></aside>
-  <div class="ui" id="attrib">Imágenes © Esri, Maxar, Earthstar Geographics · Relieve © Esri, USGS, NOAA</div>
+  <div class="ui" id="attrib">Imagen: <a href="https://s2maps.eu" target="_blank" rel="noopener" style="color:inherit">Sentinel-2 cloudless</a> © EOX (CC BY 4.0), datos Copernicus 2020 · Relieve © Esri, USGS, NOAA</div>
 </div>
 
 <script id="data-termas" type="application/json">__TERMAS__</script>
@@ -344,12 +344,12 @@ function drawTerreno(l){ const sw=Math.ceil(W/2), shh=Math.ceil(H/2); if(tcan.wi
           if(yc>yb){ const r2=(r*.72)|0,g2=(g*.72)|0,b2=(b*.72)|0; for(let yy=Math.max(0,yb);yy<yc;yy++){ let o=(yy*sw+xa)*4; for(let xx=xa;xx<xb;xx++){ px[o]=r2; px[o+1]=g2; px[o+2]=b2; o+=4; } } } } } } }
   tctx.putImageData(tbuf,0,0); ctx.imageSmoothingEnabled=true; ctx.drawImage(tcan,0,0,W,H); }
 /* ---------- Capa base: teselas raster reales (Web Mercator) ---------- */
-let estilo='sat'; // 'sat' = World Imagery (Esri) · 'relieve' = World Physical (z≤8) + Shaded Relief
-const TILES={ sat:(z,x,y)=>'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/'+z+'/'+y+'/'+x,
+let estilo='sat'; // 'sat' = Sentinel-2 cloudless (EOX) · 'relieve' = World Physical (z≤8) + Shaded Relief
+const TILES={ sat:(z,x,y)=>'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/'+z+'/'+y+'/'+x+'.jpg', // mosaico Sentinel-2 sin nubes, uniforme a todo zoom (sin parches de distintas fechas)
   relieve:(z,x,y)=>'https://server.arcgisonline.com/ArcGIS/rest/services/'+(z<=8?'World_Physical_Map':'World_Shaded_Relief')+'/MapServer/tile/'+z+'/'+y+'/'+x };
 const tcache=new Map(); let tilesPend=0;
 function tile(st,z,x,y){ const k=st+'/'+z+'/'+x+'/'+y; let t=tcache.get(k); if(t) return t; if(tilesPend>24) return null; t={img:new Image(),ok:false,err:false}; t.img.crossOrigin='anonymous'; tilesPend++; t.img.onload=()=>{t.ok=true;tilesPend--;}; t.img.onerror=()=>{t.err=true;tilesPend--;}; t.img.src=TILES[st](z,x,y); tcache.set(k,t); if(tcache.size>900){ const first=tcache.keys().next().value; tcache.delete(first); } return t; }
-function drawTeselas(l){ const n=256; const worldPx=360*cam.s; let z=Math.round(Math.log2(worldPx/n)); z=Math.max(2,Math.min(estilo==='sat'?17:13,z)); const N=1<<z; const sc=worldPx/(N*n); // escala de cada tesela en pantalla
+function drawTeselas(l){ const n=256; const worldPx=360*cam.s; let z=Math.round(Math.log2(worldPx/n)); z=Math.max(2,Math.min(estilo==='sat'?16:13,z)); const N=1<<z; const sc=worldPx/(N*n); // escala de cada tesela en pantalla
   const [laT,loL]=unproj(0,0), [laB,loR]=unproj(W,H); const tx0=Math.floor((loL+180)/360*N), tx1=Math.floor((loR+180)/360*N); const ty=la=>Math.floor((1-Math.log(Math.tan(la*D2R)+1/Math.cos(la*D2R))/Math.PI)/2*N); const ty0=Math.max(0,ty(laT)), ty1=Math.min(N-1,ty(laB));
   ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
   for(let x=tx0;x<=tx1;x++) for(let y=ty0;y<=ty1;y++){ const lon=x/N*360-180; const lat=mLat(180-y/N*360); const [px,py]=proj(lat,lon); const w=n*sc+.6;
