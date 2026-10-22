@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-22
+- Raíz del repositorio: `index.html` que redirige al mapa y `.nojekyll`, para que GitHub Pages muestre siempre el mapa (sea en modo "branch" o "GitHub Actions") y nunca el README.
 - Mapa vivo: todo más pausado (autos, aviones, avionetas, barcos, botes y aves 2–4 veces más lentos); las embarcaciones solo navegan donde la imagen satelital muestra agua (se lee el color del mapa base: barcos en agua abierta, botes cerca de la orilla, viran al tocar costa); se quitan los kayaks en ríos esquemáticos. Con varias capas activas cada terma se dibuja como un anillo segmentado (un arco por capa, centro con la primera capa) y al pasar el mouse aparecen los símbolos alrededor. Sonido rebajado a una fuente suave: hilo de agua tenue, gotas que caen al azar, viento y aves más bajos; música a 60 %.
 - Imagen base cambiada a Sentinel-2 cloudless (EOX, CC BY 4.0): mosaico uniforme sin nubes ni parches de distintas fechas al hacer zoom (la imagen de Esri mostraba retazos con luz y color distintos sobre los lagos).
 - Ficha: se retiran los botones Street View y Satélite (quedan Google Maps, fotos libres y sitio del operador); los datos de Street View siguen en `data/streetview.csv` para uso futuro.
