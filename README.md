@@ -28,6 +28,7 @@ Licencias: código **MIT** (`LICENSE`); datos **CC BY 4.0** (`DATA_LICENSE.md`).
 
 ```
 python3 scripts/build_data.py   # valida los CSV y regenera site/data/
+python3 scripts/build_site.py   # genera site/index.html (mapa vivo) desde site/_template.html
 ```
 El sitio es estático; GitHub Pages publica la carpeta `site/` mediante `.github/workflows/pages.yml`.
 

@@ -1,6 +1,10 @@
 # Changelog
 
 ## 2026-10-22
+- Mapa vivo: capas combinables (botones, varias a la vez) con símbolo propio por capa y color por valor; nuevas capas Barros y Seguridad; galería de fotos en la ficha (Wikimedia Commons, con autor y licencia, flechas y puntos); botones de la ficha en naranjo solo cuando hay información verificada (Street View comprobado, ficha Google Maps con rating, fotos libres, web).
+- `data/streetview.csv`: disponibilidad de Street View/fotoesferas en el punto (≤50 m) o cerca (≤300 m) para las 243 termas con coordenadas (77 en el punto, 23 cerca, 143 sin cobertura), con id de panorama y enlace directo.
+- `data/fotos_commons.json`: 60 termas con fotos libres de Commons (curado a mano; se distingue foto de la terma vs. entorno < 1 km).
+- `scripts/build_site.py`: genera `site/index.html` desde `site/_template.html` + CSV (ejecutar tras `build_data.py`).
 - Pasada por Google Maps de las 189 manifestaciones pendientes (`data/google_maps_resultados.csv`): 124 fichas encontradas, 35 sin ficha, 29 homónimos descartados, 1 por verificar (Skyring).
 - `servicios.csv`: 97 URLs canónicas de Google Maps nuevas, con rating, n° de reseñas, teléfono y web (etiquetados "Google Maps", dato declarado D).
 - `termas.csv`: 94 coordenadas pasadas a "exacta (Google Maps)"; corregidas coordenadas previas erróneas de Termas Valle Hermoso y Termas Cañón del Blanco.
