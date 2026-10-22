@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-10-22
+- Mapa vivo: carga de teselas más ágil (no se piden teselas durante el gesto de zoom, solo al estabilizarse; se precarga el nivel madre; satélite limitado al nivel 14, que es la resolución nativa de Sentinel-2, y se escala suave más allá); estela de los aviones fija al territorio (antes se dibujaba en pantalla y "rayaba" al mover el mapa); un solo botón de luz, "Ver de día", que aparece solo cuando en el lugar es de noche o penumbra y vuelve a "Luz real" al pulsarlo.
 - Raíz del repositorio: `index.html` que redirige al mapa y `.nojekyll`, para que GitHub Pages muestre siempre el mapa (sea en modo "branch" o "GitHub Actions") y nunca el README.
 - Mapa vivo: todo más pausado (autos, aviones, avionetas, barcos, botes y aves 2–4 veces más lentos); las embarcaciones solo navegan donde la imagen satelital muestra agua (se lee el color del mapa base: barcos en agua abierta, botes cerca de la orilla, viran al tocar costa); se quitan los kayaks en ríos esquemáticos. Con varias capas activas cada terma se dibuja como un anillo segmentado (un arco por capa, centro con la primera capa) y al pasar el mouse aparecen los símbolos alrededor. Sonido rebajado a una fuente suave: hilo de agua tenue, gotas que caen al azar, viento y aves más bajos; música a 60 %.
 - Imagen base cambiada a Sentinel-2 cloudless (EOX, CC BY 4.0): mosaico uniforme sin nubes ni parches de distintas fechas al hacer zoom (la imagen de Esri mostraba retazos con luz y color distintos sobre los lagos).
