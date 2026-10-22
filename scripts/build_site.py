@@ -30,7 +30,8 @@ def zona(lat):
 termas = read('termas.csv'); serv = {r['id']: r for r in read('servicios.csv')}; cult = {r['id']: r for r in read('cultura.csv')}
 barros = {r['id']: r for r in read('barros.csv')}
 est = {}; [est.setdefault(r['id_terma'], []).append(r) for r in read('estudios.csv')]
-tesis = read('tesis.csv')
+tesis = read('tesis.csv'); medios = read('medios.csv')
+fuentes = {}; [fuentes.setdefault(r['id_terma'], []).append(r['url']) for r in read('fuentes.csv') if r.get('url')]
 sv = {r['id']: r for r in read('streetview.csv')} if os.path.exists(os.path.join(D, 'streetview.csv')) else {}
 fotos = json.load(open(os.path.join(D, 'fotos_commons.json'), encoding='utf8'))
 fotos.pop('_meta', None)
@@ -39,7 +40,9 @@ out = []
 for r in termas:
     rid = r['id']; s = serv.get(rid, {}); c = cult.get(rid, {}); b = barros.get(rid, {}); v = sv.get(rid, {})
     la, lo = num(r['lat']), num(r['lon'])
-    ntes = sum(1 for t in tesis if norm(r['nombre']) and norm(r['nombre']) in norm(t['termas']))
+    tes_l = [t for t in tesis if norm(r['nombre']) and norm(r['nombre']) in norm(t['termas'])]
+    ntes = len(tes_l)
+    med_l = [m for m in medios if norm(m['terma']) and (norm(m['terma']) in norm(r['nombre']) or norm(r['nombre']) in norm(m['terma']))]
     infra = [x.strip() for x in (s.get('infraestructura') or '').split('|') if x.strip()]
     prop = [x.strip() for x in (s.get('propiedades_declaradas') or '').split('|') if x.strip()]
     gm = s.get('google_maps_url') or None
@@ -58,6 +61,11 @@ for r in termas:
         'svu': v.get('url_pano') or None, 'svt': v.get('tipo') or None,
         'gm': gm, 'gr': s.get('google_rating') or None, 'gn': s.get('google_resenas') or None,
         'fot': fotos.get(rid, []),
+        # referencias para el popup: [autor, año, título, enlace]
+        'refE': [[e['autor'], e['anio'], e['titulo'], e['link']] for e in est.get(rid, [])],
+        'refT': [[t['autor'], t['anio'], t['titulo'] + (' (' + t['universidad'] + ')' if t.get('universidad') else ''), t['link']] for t in tes_l],
+        'refM': [[m['medio_o_canal'], m['anio'], m['titulo'], m['link']] for m in med_l],
+        'refF': fuentes.get(rid, []),
     }
     # recortes para mantener el HTML liviano
     for k in ('q', 'orig'):

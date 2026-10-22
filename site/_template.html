@@ -95,6 +95,19 @@ h1 small{font-weight:400;color:var(--muted);font-size:.7em;margin-left:.5em}
 #sug button:hover,#sug button[aria-selected="true"]{background:rgba(255,154,60,.16)}
 #sug button small{color:var(--muted);font-size:11px;margin-left:auto;white-space:nowrap}
 #sug button i{font-style:normal;width:16px;text-align:center;color:var(--calor)}
+/* Popup de referencias */
+#refs{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(5,10,18,.55);backdrop-filter:blur(3px)}
+#refs.open{display:flex}
+#refs .box{width:min(620px,calc(100vw - 32px));max-height:min(78vh,720px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#refs h2{font-family:var(--display);font-size:18px;margin:0 0 2px}
+#refs .cerrar{float:right;background:none;border:0;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
+#refs ol{margin:8px 0 0;padding-left:22px;font-size:13px;line-height:1.5}
+#refs li{margin-bottom:7px}
+#refs li a{color:var(--agua);text-decoration:none}
+#refs li a:hover{text-decoration:underline}
+#refs li .sin{color:var(--muted)}
+.refbtn{background:none;border:0;padding:0;font:inherit;color:var(--agua);cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+.refbtn:hover{color:var(--calor)}
 #attrib{right:max(8px,env(safe-area-inset-right,0px));bottom:max(4px,env(safe-area-inset-bottom,0px));font-size:10px;color:rgba(232,238,242,.75);background:rgba(8,14,24,.45);padding:2px 6px;border-radius:6px;z-index:4}
 a{color:var(--agua)}
 ul.list{margin:0;padding-left:18px}
@@ -125,6 +138,7 @@ ul.list{margin:0;padding-left:18px}
     <div class="hint">Cada capa tiene su propio símbolo; el color indica el valor. Borde continuo = dato medido · discontinuo = declarado.</div>
   </div>
   <aside class="ui hidden" id="side" aria-live="polite"></aside>
+  <div id="refs" role="dialog" aria-modal="true" aria-labelledby="refsT"><div class="box"><button class="cerrar" aria-label="Cerrar">×</button><h2 id="refsT"></h2><p class="hint" id="refsS"></p><ol id="refsL"></ol></div></div>
   <div class="ui" id="attrib">Imagen: <a href="https://s2maps.eu" target="_blank" rel="noopener" style="color:inherit">Sentinel-2 cloudless</a> © EOX (CC BY 4.0), datos Copernicus 2020 · Relieve © Esri, USGS, NOAA</div>
 </div>
 
@@ -465,7 +479,7 @@ function renderZona(z){ const list=visibles().filter(t=>t.z===z.id); const doc=l
   side.classList.remove('hidden'); }
 function renderTerma(t){ const z=zoneOf(t.z); const tab=(id,sel)=>'<button role="tab" aria-selected="'+sel+'" data-tab="'+id+'">'+(id==='d'?'Descubre':'Investiga')+'</button>';
   const desc='<div class="kv"><div><b>Temperatura</b>'+(t.tm!=null?'<span class="tag m">M</span> '+esc(t.tms):t.td!=null?'<span class="tag d">D</span> '+esc(t.tds):'sin dato')+'</div><div><b>Agua</b>'+(t.q?esc(t.q):'sin análisis')+'</div><div><b>Origen</b>'+(t.orig?esc(t.orig):'sin dato')+'</div><div><b>Qué hay</b>'+(t.infra.length?esc(t.infra.join(', ')):'sin información')+(t.cat?' · '+esc(t.cat):'')+'</div><div><b>Pueblo originario</b>'+(t.pueblo?esc(t.pueblo):'sin dato')+'</div><div><b>Barros</b>'+(t.barros?esc(t.barros):'ninguno registrado')+'</div></div>'+(t.prop.length?'<h3>Propiedades que se le atribuyen <span class="tag d">lo dice el operador</span></h3><p>'+esc(t.prop.join(' · '))+'</p>':'')+'<p class="hint">Altitud: '+(t.alt!=null?t.alt+' m':'sin dato')+' · Coordenada: '+esc(t.prec||'')+' · Estado: '+esc(t.est||'desconocido')+'</p>';
-  const inv='<div class="kv"><div><b>T medida</b>'+(t.tms?esc(t.tms):'NA')+'</div><div><b>Fuente</b>'+(t.tfm?esc(t.tfm):'NA')+'</div><div><b>pH</b>'+(t.ph!=null?t.ph:'NA')+'</div><div><b>Tipo químico</b>'+(t.q?esc(t.q):'NA')+'</div><div><b>Estudios enlazados</b>'+t.nest+'</div><div><b>Tesis</b>'+t.ntes+'</div><div><b>Capa de certeza</b>'+esc(t.capa)+'</div><div><b>Tipo</b>'+esc(t.tipo)+'</div></div><p class="hint">La ficha completa (análisis por muestra, ternario Cl–SO₄–HCO₃, isótopos, biología, vademécum y bibliografía) se construye desde la base maestra; este prototipo muestra un resumen.</p>';
+  const inv='<div class="kv"><div><b>T medida</b>'+(t.tms?esc(t.tms):'NA')+'</div><div><b>Fuente</b>'+(t.tfm?esc(t.tfm):'NA')+'</div><div><b>pH</b>'+(t.ph!=null?t.ph:'NA')+'</div><div><b>Tipo químico</b>'+(t.q?esc(t.q):'NA')+'</div><div><b>Estudios enlazados</b>'+(t.refE.length?'<button class="refbtn" data-ref="E">'+t.refE.length+' · ver referencias</button>':'0')+'</div><div><b>Tesis</b>'+(t.refT.length?'<button class="refbtn" data-ref="T">'+t.refT.length+' · ver</button>':'0')+'</div><div><b>Prensa y videos</b>'+(t.refM.length?'<button class="refbtn" data-ref="M">'+t.refM.length+' · ver</button>':'0')+'</div><div><b>Fuentes consultadas</b>'+(t.refF.length?'<button class="refbtn" data-ref="F">'+t.refF.length+' · ver enlaces</button>':'0')+'</div><div><b>Capa de certeza</b>'+esc(t.capa)+'</div><div><b>Tipo</b>'+esc(t.tipo)+'</div></div><p class="hint">La ficha completa (análisis por muestra, ternario Cl–SO₄–HCO₃, isótopos, biología, vademécum y bibliografía) se construye desde la base maestra; este prototipo muestra un resumen.</p>';
   // Ver el lugar. Los botones se pintan naranjos solo cuando hay información verificada (Street View comprobado el 22-10-2026, ficha de Google Maps, fotos libres, web del operador).
   const q=t.lat.toFixed(5)+','+t.lon.toFixed(5); const A=(href,txt,cls)=>'<a class="'+cls+'" target="_blank" rel="noopener" href="'+esc(href)+'">'+txt+'</a>'; const OFF=txt=>'<span class="off">'+txt+'</span>';
   const bSV=t.sv==='si'?A(t.svu,'Street View'+(t.svt&&t.svt.startsWith('foto')?' <span class="star">360° de usuario</span>':''),'on'):t.sv==='cerca'?A(t.svu,'Street View cerca <span class="star">&lt; 300 m</span>','near'):OFF('Sin Street View');
@@ -484,7 +498,12 @@ const COMMONS_IMG=f=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+enco
 function galShow(i){ const g=document.getElementById('gal'); if(!g) return; const n=galFotos.length; i=((i%n)+n)%n; g.dataset.i=i; const f=galFotos[i]; const img=g.querySelector('img'); img.classList.add('fade'); const pre=new Image(); pre.onload=()=>{ img.src=pre.src; img.alt=f[0]; img.classList.remove('fade'); }; pre.onerror=()=>{ img.classList.remove('fade'); }; pre.src=COMMONS_IMG(f[0]);
   document.getElementById('galtxt').innerHTML='<a href="https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(f[0])+'" target="_blank" rel="noopener">'+esc(f[1]||'autor desconocido')+' · '+esc(f[2])+'</a>'; document.getElementById('galsrc').textContent=f[3]?'la terma':'entorno (< 1 km)';
   g.querySelectorAll('.galdots i').forEach((d,k)=>d.classList.toggle('on',k===i)); if(n>1){ const nx=new Image(); nx.src=COMMONS_IMG(galFotos[(i+1)%n][0]); } }
-side.addEventListener('click',e=>{ const b=e.target.closest('.galb'); if(!b) return; const g=document.getElementById('gal'); galShow((+g.dataset.i||0)+(b.classList.contains('next')?1:-1)); });
+const refs=document.getElementById('refs');
+function abrirRefs(t,k){ const tit={E:'Estudios científicos',T:'Tesis',M:'Prensa, documentales y videos',F:'Fuentes consultadas'}[k]; const L=t['ref'+k]; const li=L.map(r=>{ if(typeof r==='string'){ return '<li><a href="'+esc(r)+'" target="_blank" rel="noopener">'+esc(r.replace(/^https?:\/\//,'').slice(0,90))+'</a></li>'; } const txt=esc([r[0],r[1]].filter(Boolean).join(' · '))+(r[2]?'. <i>'+esc(r[2])+'</i>':''); return '<li>'+(r[3]?'<a href="'+esc(r[3])+'" target="_blank" rel="noopener">'+txt+'</a>':txt+' <span class="sin">(sin enlace)</span>')+'</li>'; }).join('');
+  document.getElementById('refsT').textContent=tit+' · '+t.n; document.getElementById('refsS').textContent=L.length+(L.length===1?' referencia':' referencias')+' · los enlaces abren en una pestaña nueva'; document.getElementById('refsL').innerHTML=li; refs.classList.add('open'); refs.querySelector('.cerrar').focus(); }
+refs.addEventListener('click',e=>{ if(e.target===refs||e.target.closest('.cerrar')) refs.classList.remove('open'); });
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&refs.classList.contains('open')) refs.classList.remove('open'); });
+side.addEventListener('click',e=>{ const rb=e.target.closest('button[data-ref]'); if(rb&&termaSel){ abrirRefs(termaSel,rb.dataset.ref); return; } const b=e.target.closest('.galb'); if(!b) return; const g=document.getElementById('gal'); galShow((+g.dataset.i||0)+(b.classList.contains('next')?1:-1)); });
 addEventListener('keydown',e=>{ if(!document.getElementById('gal')||side.classList.contains('hidden')) return; if(e.key==='ArrowRight') galShow((+document.getElementById('gal').dataset.i||0)+1); if(e.key==='ArrowLeft') galShow((+document.getElementById('gal').dataset.i||0)-1); });
 side.addEventListener('click',e=>{ const a=e.target.closest('a[data-t]'); if(a){ e.preventDefault(); const t=TERMAS.find(x=>x.id===a.dataset.t); if(t) goTerma(t); return; } const b=e.target.closest('button[data-tab]'); if(b){ side.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',x===b)); document.getElementById('tabD').hidden=b.dataset.tab!=='d'; document.getElementById('tabI').hidden=b.dataset.tab!=='i'; } });
 
