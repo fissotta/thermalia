@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-10-23
+- Mapa vivo: símbolos de termas con más contraste sobre el satélite (disco oscuro de respaldo con sombra suave, anillo blanco más grueso, halo naranjo en degradé y símbolo algo mayor).
+
 ## 2026-10-22
 - Mapa vivo: solo se renderiza Chile y una franja de Argentina (hasta 66,3° O, para Copahue y los pasos cordilleranos); fuera de esa región no se piden teselas (menos descargas, más liviano) y el mapa se funde en un banco de nubes con gradiente difuso que ocupa al menos un cuarto de la pantalla, con nubes que derivan muy lento por el borde; el desplazamiento se limita a la región. Lista Explora sin la etiqueta "aliada Thermalia" (Puyehue y Aguas Calientes siguen al inicio).
 - Nuevo sitio de datos en `/data` (`site/data/index.html`, generado por `build_site.py` desde `site/_data_template.html`): vademécum de aguas termales de Chile al estilo del Vademécum de aguas mineromedicinales españolas (ISCIII 2004). Resumen inicial con cifras clave y tablero "¿Qué sabemos y qué falta?" (cobertura por bloque de datos, leyenda M/D/H/NA, distribuciones por clase térmica, mineralización, certeza y categoría); listado completo con buscador, filtros por región/certeza/tipo y orden por columna; al pinchar una terma se abre una ficha modal con Situación, Propiedades fisicoquímicas, Sustancias disueltas, Clasificación derivada, Servicio y técnicas, Indicaciones y saberes, Referencias enlazadas y completitud. Modo claro/oscuro automático con botón, español/inglés con botón, colores teal/café/naranjo, animaciones sobrias. `data/index.html` redirige `/data` al sitio; botón "Datos" en el mapa.

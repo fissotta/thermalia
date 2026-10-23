@@ -475,13 +475,15 @@ function drawTermas(now,l){ const list=visibles(); const act=CAPAS.filter(c=>cap
     ZONAS.forEach(z=>{ const n=list.filter(t=>t.z===z.id).length; if(!n) return; const [x,y]=projT((z.lat[0]+z.lat[1])/2, z.c[1]); const r=10+Math.sqrt(n)*2.2; const pulse=sereno?1:1+Math.sin(now/900+z.id)*.06; ctx.fillStyle='rgba(255,154,60,.18)'; ctx.beginPath(); ctx.arc(x,y,r*2.2*pulse,0,6.28); ctx.fill(); ctx.fillStyle='rgba(255,154,60,.9)'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.fillStyle='#1a0d00'; ctx.font='700 13px '+getComputedStyle(document.body).fontFamily; ctx.textAlign='center'; ctx.fillText(n,x,y+4); ctx.textAlign='left'; });
     return; }
   const font=getComputedStyle(document.body).fontFamily;
-  list.forEach(t=>{ const [x,y]=projT(t.lat,t.lon); if(x<-24||x>W+24||y<-24||y>H+24) return; const med=t.tm!=null; const big=(t===termaSel)?1.7:(t===hoverTerma?1.35:1); const r=4.6*big;
+  list.forEach(t=>{ const [x,y]=projT(t.lat,t.lon); if(x<-24||x>W+24||y<-24||y>H+24) return; const med=t.tm!=null; const big=(t===termaSel)?1.7:(t===hoverTerma?1.35:1); const r=5.2*big;
     // vapor sobre las termas muy calientes
     if(!sereno&&(t.tm||0)>60&&cam.s>60){ const k=(now/40+x)%60; ctx.fillStyle='rgba(255,217,168,'+(.25*(1-k/60))+')'; ctx.beginPath(); ctx.arc(x+Math.sin(now/500+x)*3,y-8-k*.4,3+k*.12,0,6.28); ctx.fill(); }
     // halo cálido (más visible de noche)
-    const halo=(act.length>1?(6.5+act.length*.7):7)*big; ctx.fillStyle='rgba(255,154,60,'+(l<.4?.33:.14)+')'; ctx.beginPath(); ctx.arc(x,y,halo+r*.8,0,6.28); ctx.fill();
+    const halo=(act.length>1?(6.5+act.length*.7):7)*big; const hg=ctx.createRadialGradient(x,y,r,x,y,halo+r*1.6); hg.addColorStop(0,'rgba(255,154,60,'+(l<.4?.45:.30)+')'); hg.addColorStop(1,'rgba(255,154,60,0)'); ctx.fillStyle=hg; ctx.beginPath(); ctx.arc(x,y,halo+r*1.6,0,6.28); ctx.fill();
+    // disco oscuro de respaldo y sombra: separa el símbolo del terreno (tonos café/naranjo del satélite)
+    ctx.fillStyle='rgba(8,14,24,.28)'; ctx.beginPath(); ctx.arc(x,y+1.5,r+4.2,0,6.28); ctx.fill(); ctx.fillStyle='rgba(8,14,24,.62)'; ctx.beginPath(); ctx.arc(x,y,r+3.4,0,6.28); ctx.fill();
     if(act.length===1){ const c=act[0]; const pal=PAL[c[0]]; const col=(pal[claseDe(t,c[0])]||pal.NA||['#6b7a86'])[0];
-      glyphPath(ctx,c[2],x,y,r); ctx.fillStyle=col; ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.92)'; ctx.lineWidth=1.2; ctx.setLineDash(med?[]:[2,2]); glyphPath(ctx,c[2],x,y,r+1.3); ctx.stroke(); ctx.setLineDash([]); }
+      glyphPath(ctx,c[2],x,y,r); ctx.fillStyle=col; ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.96)'; ctx.lineWidth=1.9; ctx.setLineDash(med?[]:[2.2,2.2]); glyphPath(ctx,c[2],x,y,r+1.5); ctx.stroke(); ctx.setLineDash([]); }
     else { // varias capas: anillo segmentado (un arco por capa, en el orden de la leyenda) con centro en el color de la primera capa
       const n=act.length, R=(4.5+n*.7)*big, wdt=3.6*big, gap=.07; ctx.fillStyle='rgba(8,14,24,.6)'; ctx.beginPath(); ctx.arc(x,y,R+wdt/2+1.2,0,6.28); ctx.fill();
       act.forEach((c,i)=>{ const pal=PAL[c[0]]; const col=(pal[claseDe(t,c[0])]||pal.NA||['#6b7a86'])[0]; const a0=-Math.PI/2+i*2*Math.PI/n+gap, a1=-Math.PI/2+(i+1)*2*Math.PI/n-gap; ctx.strokeStyle=col; ctx.lineWidth=wdt; ctx.lineCap='butt'; ctx.beginPath(); ctx.arc(x,y,R,a0,a1); ctx.stroke(); });
